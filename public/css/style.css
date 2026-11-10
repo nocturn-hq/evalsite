@@ -1,0 +1,16 @@
+:root{--bg:#f3f6fa;--card:#fff;--ink:#14243a;--mute:#5d6b7e;--line:#dbe3ee;--brand:#0b5fff;--brand-d:#0846c2;--gold:#e8a200;--bad:#c62828;--r:14px}
+@media(prefers-color-scheme:dark){:root{--bg:#0d1624;--card:#142238;--ink:#e8eef8;--mute:#93a3ba;--line:#243651;--brand:#4d8dff;--brand-d:#7aa9ff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Sora",system-ui,sans-serif}
+h1,h2,h3{line-height:1.15;margin:0 0 .5em}h1{font-size:clamp(2rem,6vw,3.2rem)}a{color:var(--brand)}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card)}
+.nav a{margin-left:16px;text-decoration:none;font-weight:600}.nav .logo{font-weight:800;font-size:1.2rem;margin:0;color:var(--ink)}
+.wrap{max-width:900px;margin:0 auto;padding:28px 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:16px}
+input,select,textarea,button{font:inherit;width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);margin-bottom:12px}
+button,.btn{background:var(--brand);color:#fff;border:0;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;text-align:center;width:auto;padding:12px 22px;border-radius:10px}
+button:hover,.btn:hover{background:var(--brand-d)}.form button{width:100%}:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.money b{font-size:2rem;display:block}.money small{display:block;color:var(--mute)}
+.err{color:var(--bad);min-height:1.4em}.empty{text-align:center;color:var(--mute);padding:32px 12px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tag{background:var(--gold);color:#222;border-radius:99px;padding:2px 10px;font-size:.8rem;font-weight:700}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:8px;border-bottom:1px solid var(--line);font-size:.9rem}
