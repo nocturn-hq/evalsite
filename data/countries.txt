@@ -1,0 +1,213 @@
+Afghanistan|AF|AFN|؋|67.5
+Albania|AL|ALL|L|89.2
+Algeria|DZ|DZD|د.ج|133.8
+American Samoa|AS|USD|$|1
+Andorra|AD|EUR|€|0.89
+Angola|AO|AOA|Kz|915
+Anguilla|AI|XCD|$|2.7
+Antigua and Barbuda|AG|XCD|$|2.7
+Argentina|AR|ARS|$|1020
+Armenia|AM|AMD|֏|387.5
+Aruba|AW|AWG|ƒ|1.79
+Australia|AU|AUD|$|1.45
+Austria|AT|EUR|€|0.89
+Azerbaijan|AZ|AZN|₼|1.7
+Bahamas|BS|BSD|$|1
+Bahrain|BH|BHD|.د.ب|0.376
+Bangladesh|BD|BDT|৳|120
+Barbados|BB|BBD|$|2
+Belarus|BY|BYN|Br|3.25
+Belgium|BE|EUR|€|0.89
+Belize|BZ|BZD|BZ$|2
+Benin|BJ|XOF|CFA|586
+Bermuda|BM|BMD|$|1
+Bhutan|BT|BTN|Nu.|93.8
+Bolivia|BO|BOB|Bs.|6.91
+Bosnia and Herzegovina|BA|BAM|KM|1.75
+Botswana|BW|BWP|P|13.5
+Brazil|BR|BRL|R$|5.75
+British Virgin Islands|VG|USD|$|1
+Brunei|BN|BND|B$|1.28
+Bulgaria|BG|BGN|лв|1.75
+Burkina Faso|BF|XOF|CFA|586
+Burundi|BI|BIF|FBu|2890
+Cabo Verde|CV|CVE|$|98.5
+Cambodia|KH|KHR|៛|4050
+Cameroon|CM|XAF|FCFA|586
+Canada|CA|CAD|$|1.41
+Cayman Islands|KY|KYD|$|0.833
+Central African Republic|CF|XAF|FCFA|586
+Chad|TD|XAF|FCFA|586
+Chile|CL|CLP|$|950
+China|CN|CNY|¥|6.67
+Colombia|CO|COP|$|4380
+Comoros|KM|KMF|CF|439.5
+Congo (Congo-Brazzaville)|CG|XAF|FCFA|586
+Congo (Democratic Republic)|CD|CDF|FC|2850
+Costa Rica|CR|CRC|₡|510
+Croatia|HR|EUR|€|0.89
+Cuba|CU|CUP|$|24
+Cyprus|CY|EUR|€|0.89
+Czech Republic (Czechia)|CZ|CZK|Kč|22.4
+Denmark|DK|DKK|kr.|6.95
+Djibouti|DJ|DJF|Fdj|177.7
+Dominica|DM|XCD|$|2.7
+Dominican Republic|DO|DOP|RD$|60.2
+Ecuador|EC|USD|$|1
+Egypt|EG|EGP|E£|49.3
+El Salvador|SV|USD|$|1
+Equatorial Guinea|GQ|XAF|FCFA|586
+Eritrea|ER|ERN|Nfk|15
+Estonia|EE|EUR|€|0.89
+Eswatini|SZ|SZL|L|18.2
+Ethiopia|ET|ETB|Br|124.5
+Fiji|FJ|FJD|FJ$|2.25
+Finland|FI|EUR|€|0.89
+France|FR|EUR|€|0.89
+French Polynesia|PF|XPF|₣|111
+Gabon|GA|XAF|FCFA|586
+Gambia|GM|GMD|D|71
+Georgia|GE|GEL|₾|2.75
+Germany|DE|EUR|€|0.89
+Ghana|GH|GHS|GH₵|15.6
+Gibraltar|GI|GIP|£|0.77
+Greece|GR|EUR|€|0.89
+Greenland|GL|DKK|kr.|6.95
+Grenada|GD|XCD|$|2.7
+Guam|GU|USD|$|1
+Guatemala|GT|GTQ|Q|7.72
+Guinea|GN|GNF|FG|8620
+Guinea-Bissau|GW|XOF|CFA|586
+Guyana|GY|GYD|$|209
+Haiti|HT|HTG|G|131.5
+Honduras|HN|HNL|L|25.1
+Hong Kong|HK|HKD|HK$|7.78
+Hungary|HU|HUF|Ft|372
+Iceland|IS|ISK|kr|137
+India|IN|INR|₹|84.4
+Indonesia|ID|IDR|Rp|15650
+Iran|IR|IRR|﷼|42000
+Iraq|IQ|IQD|ع.د|1310
+Ireland|IE|EUR|€|0.89
+Isle of Man|IM|IMP|£|0.77
+Israel|IL|ILS|₪|3.72
+Italy|IT|EUR|€|0.89
+Ivory Coast (Côte d'Ivoire)|CI|XOF|CFA|586
+Jamaica|JM|JMD|J$|158
+Japan|JP|JPY|¥|153.5
+Jordan|JO|JOD|د.ا|0.709
+Kazakhstan|KZ|KZT|₸|492
+Kenya|KE|KES|KSh|129.5
+Kiribati|KI|AUD|$|1.45
+Kosovo|XK|EUR|€|0.89
+Kuwait|KW|KWD|د.ك|0.307
+Kyrgyzstan|KG|KGS|сом|86.5
+Laos|LA|LAK|₭|21850
+Latvia|LV|EUR|€|0.89
+Lebanon|LB|LBP|L£|89500
+Lesotho|LS|LSL|L|18.2
+Liberia|LR|LRD|L$|199
+Libya|LY|LYD|ل.د|4.84
+Liechtenstein|LI|CHF|CHF|0.87
+Lithuania|LT|EUR|€|0.89
+Luxembourg|LU|EUR|€|0.89
+Macau|MO|MOP|MOP$|8.01
+Madagascar|MG|MGA|Ar|4620
+Malawi|MW|MWK|MK|1740
+Malaysia|MY|MYR|RM|4.38
+Maldives|MV|MVR|Rf|15.4
+Mali|ML|XOF|CFA|586
+Malta|MT|EUR|€|0.89
+Marshall Islands|MH|USD|$|1
+Mauritania|MR|MRU|UM|39.7
+Mauritius|MU|MUR|₨|46.5
+Mexico|MX|MXN|$|20.1
+Micronesia|FM|USD|$|1
+Moldova|MD|MDL|L|18.1
+Monaco|MC|EUR|€|0.89
+Mongolia|MN|MNT|₮|3410
+Montenegro|ME|EUR|€|0.89
+Montserrat|MS|XCD|$|2.7
+Morocco|MA|MAD|د.م.|9.85
+Mozambique|MZ|MZN|MT|63.9
+Myanmar (Burma)|MM|MMK|K|2100
+Namibia|NA|NAD|N$|18.2
+Nauru|NR|AUD|$|1.45
+Nepal|NP|NPR|रू|135
+Netherlands|NL|EUR|€|0.89
+New Caledonia|NC|XPF|₣|111
+New Zealand|NZ|NZD|$|1.68
+Nicaragua|NI|NIO|C$|36.8
+Niger|NE|XOF|CFA|586
+Nigeria|NG|NGN|₦|1680
+North Macedonia|MK|MKD|ден|54.8
+Norway|NO|NOK|kr|10.95
+Oman|OM|OMR|ر.ع.|0.384
+Pakistan|PK|PKR|₨|278.5
+Palau|PW|USD|$|1
+Palestine|PS|ILS|₪|3.72
+Panama|PA|PAB|B/.|1
+Papua New Guinea|PG|PGK|K|3.95
+Paraguay|PY|PYG|₲|7800
+Peru|PE|PEN|S/.|3.75
+Philippines|PH|PHP|₱|58.2
+Poland|PL|PLN|zł|3.98
+Portugal|PT|EUR|€|0.89
+Puerto Rico|PR|USD|$|1
+Qatar|QA|QAR|ر.ق|3.64
+Romania|RO|RON|lei|4.55
+Russia|RU|RUB|₽|97.5
+Rwanda|RW|RWF|FRw|1370
+Saint Kitts and Nevis|KN|XCD|$|2.7
+Saint Lucia|LC|XCD|$|2.7
+Saint Vincent and the Grenadines|VC|XCD|$|2.7
+Samoa|WS|WST|WS$|2.75
+San Marino|SM|EUR|€|0.89
+São Tomé and Príncipe|ST|STN|Db|22.8
+Saudi Arabia|SA|SAR|ر.س|3.75
+Senegal|SN|XOF|CFA|586
+Serbia|RS|RSD|дин.|108.5
+Seychelles|SC|SCR|₨|14.2
+Sierra Leone|SL|SLE|Le|22.5
+Singapore|SG|SGD|S$|1.32
+Slovakia|SK|EUR|€|0.89
+Slovenia|SI|EUR|€|0.89
+Solomon Islands|SB|SBD|SI$|8.45
+Somalia|SO|SOS|Sh.So.|571
+South Africa|ZA|ZAR|R|18.2
+South Korea|KR|KRW|₩|1380
+South Sudan|SS|SSP|SS£|3050
+Spain|ES|EUR|€|0.89
+Sri Lanka|LK|LKR|Rs|293
+Sudan|SD|SDG|ج.س.|601
+Suriname|SR|SRD|$|35.2
+Sweden|SE|SEK|kr|10.45
+Switzerland|CH|CHF|CHF|0.87
+Syria|SY|SYP|LS|13000
+Taiwan|TW|TWD|NT$|32.1
+Tajikistan|TJ|TJS|SM|10.7
+Tanzania|TZ|TZS|TSh|2660
+Thailand|TH|THB|฿|33.8
+Timor-Leste|TL|USD|$|1
+Togo|TG|XOF|CFA|586
+Tonga|TO|TOP|T$|2.35
+Trinidad and Tobago|TT|TTD|TT$|6.78
+Tunisia|TN|TND|د.ت|3.08
+Turkey|TR|TRY|₺|34.3
+Turkmenistan|TM|TMT|m|3.5
+Turks and Caicos Islands|TC|USD|$|1
+Tuvalu|TV|AUD|$|1.45
+Uganda|UG|UGX|USh|3670
+Ukraine|UA|UAH|₴|41.3
+United Arab Emirates|AE|AED|د.إ|3.67
+United Kingdom|GB|GBP|£|0.77
+United States|US|USD|$|1
+Uruguay|UY|UYU|$U|41.6
+Uzbekistan|UZ|UZS|soʻm|12800
+Vanuatu|VU|VUV|VT|119
+Vatican City|VA|EUR|€|0.89
+Venezuela|VE|VES|Bs.S|44.5
+Vietnam|VN|VND|₫|25300
+Yemen|YE|YER|﷼|250
+Zambia|ZM|ZMW|ZK|26.8
+Zimbabwe|ZW|ZWG|ZiG|27.5

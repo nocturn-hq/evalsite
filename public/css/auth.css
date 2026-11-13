@@ -1,0 +1,72 @@
+/* MawiE login + signup pages: split screen with a wallpaper panel. Scoped to those two pages only. */
+body:is([data-p="login"],[data-p="signup"]){--g0:#06201a;--g1:#0a3027;--g2:#0e4a3c;--pine:#0b6b55;--leaf:#19a07d;--gold:#f4b730;--edge:#dbe6e1;--soft:#52615b;
+  --wall:url("/wallpaper"),url("/img/hero.jpg"),url("/img/hero.webp"),url("/img/hero.png");background:#fff;color:#0f1c18}
+body:is([data-p="login"],[data-p="signup"]) .split{display:grid;grid-template-columns:1.05fr .95fr;min-height:100vh}
+body:is([data-p="login"],[data-p="signup"]) .side{position:relative;overflow:hidden;color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:40px 56px;
+  background:radial-gradient(700px 420px at 90% 0%,rgba(25,160,125,.4),transparent 62%),radial-gradient(520px 320px at 0% 100%,rgba(244,183,48,.16),transparent 60%),var(--g0)}
+body:is([data-p="login"],[data-p="signup"]) .side::before{content:"";position:absolute;inset:0;z-index:0;
+  background-image:linear-gradient(180deg,rgba(6,32,26,.7),rgba(6,32,26,.55) 45%,rgba(6,32,26,.85)),var(--wall);
+  background-size:auto,cover,cover,cover;background-position:center;background-repeat:no-repeat}
+body:is([data-p="login"],[data-p="signup"]) .side>*{position:relative;z-index:1}
+body:is([data-p="login"],[data-p="signup"]) .side .logo{color:#fff;width:max-content}
+body:is([data-p="login"],[data-p="signup"]) .side .logo img{background:#fff;border-radius:11px;padding:4px;height:40px;width:40px}
+body:is([data-p="login"],[data-p="signup"]) .side h1{font-size:clamp(2.2rem,4vw,3.4rem);line-height:1.02;font-weight:800;letter-spacing:-.04em}
+body:is([data-p="login"],[data-p="signup"]) .side .lead{margin:16px 0 28px;color:rgba(255,255,255,.78);font-size:1.1rem;max-width:36ch}
+body:is([data-p="login"],[data-p="signup"]) .perks{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+body:is([data-p="login"],[data-p="signup"]) .perks li{display:flex;align-items:center;gap:12px;font-weight:600;color:rgba(255,255,255,.92)}
+body:is([data-p="login"],[data-p="signup"]) .perks .pi{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:var(--gold)}
+body:is([data-p="login"],[data-p="signup"]) .perks .pi svg{width:19px;height:19px}
+body:is([data-p="login"],[data-p="signup"]) .side small{color:rgba(255,255,255,.55)}
+body:is([data-p="login"],[data-p="signup"]) .pane{display:grid;place-items:center;padding:40px 28px;background:#f4f8f6}
+body:is([data-p="login"],[data-p="signup"]) .box{width:100%;max-width:420px}
+body:is([data-p="login"],[data-p="signup"]) .box .back{display:inline-flex;align-items:center;gap:6px;color:var(--soft);font-weight:600;text-decoration:none;margin-bottom:28px;font-size:.92rem}
+body:is([data-p="login"],[data-p="signup"]) .box .back:hover{color:var(--pine)}
+body:is([data-p="login"],[data-p="signup"]) .box h2{font-size:2.1rem;font-weight:800;letter-spacing:-.035em}
+body:is([data-p="login"],[data-p="signup"]) .box .sub{color:var(--soft);margin:8px 0 26px}
+body:is([data-p="login"],[data-p="signup"]) label{font-weight:700;font-size:.9rem}
+body:is([data-p="login"],[data-p="signup"]) input{border:1px solid var(--edge);border-radius:12px;padding:13px 14px;background:#fff}
+body:is([data-p="login"],[data-p="signup"]) input:hover{background:#fff;border-color:#b9cfc6}
+body:is([data-p="login"],[data-p="signup"]) input:focus{border-color:var(--pine);box-shadow:0 0 0 4px rgba(25,160,125,.18)}
+body:is([data-p="login"],[data-p="signup"]) .pw button{border:0;box-shadow:none;background:transparent}
+body:is([data-p="login"],[data-p="signup"]) .pw button:hover{transform:none;box-shadow:none;background:#eef4f1}
+body:is([data-p="login"],[data-p="signup"]) form>button[type=submit]{width:100%;border:0;border-radius:999px;box-shadow:none;background:var(--g1);color:#fff;padding:15px 24px;font-size:1.05rem;transition:background-color .15s,transform .15s,box-shadow .15s}
+body:is([data-p="login"],[data-p="signup"]) form>button[type=submit]:hover{background:var(--pine);transform:translateY(-2px);box-shadow:0 12px 26px -10px rgba(11,107,85,.6)}
+body:is([data-p="login"],[data-p="signup"]) form>button[type=submit]:active{transform:none;box-shadow:none}
+body:is([data-p="login"],[data-p="signup"]) .alt{margin-top:22px;text-align:center;color:var(--soft)}
+body:is([data-p="login"],[data-p="signup"]) .alt a{font-weight:700;color:var(--pine)}
+body:is([data-p="login"],[data-p="signup"]) :focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+@media(max-width:900px){
+  body:is([data-p="login"],[data-p="signup"]) .split{grid-template-columns:1fr;min-height:0}
+  body:is([data-p="login"],[data-p="signup"]) .side{padding:28px 24px 34px;gap:22px}
+  body:is([data-p="login"],[data-p="signup"]) .perks,body:is([data-p="login"],[data-p="signup"]) .side small,body:is([data-p="login"],[data-p="signup"]) .side .lead{display:none}
+  body:is([data-p="login"],[data-p="signup"]) .side h1{font-size:2rem}
+  body:is([data-p="login"],[data-p="signup"]) .pane{padding:32px 20px 48px;align-items:start}
+}
+
+/* ---- signup extras (same look as login) ---- */
+body[data-p="signup"] .side{position:sticky;top:0;height:100vh;align-self:start}
+body[data-p="signup"] .pane{padding:40px 28px 56px}
+body[data-p="signup"] .box h2{font-size:2.1rem}
+body[data-p="signup"] .box .sub{margin-bottom:22px}
+body[data-p="signup"] .field{margin-bottom:15px}
+body[data-p="signup"] select{width:100%;border:1px solid var(--edge);border-radius:12px;padding:13px 40px 13px 14px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%2352615b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 12px center/18px no-repeat;-webkit-appearance:none;appearance:none;font:inherit;color:inherit}
+body[data-p="signup"] select:hover{border-color:#b9cfc6;background-color:#fff}
+body[data-p="signup"] select:focus{border-color:var(--pine);box-shadow:0 0 0 4px rgba(25,160,125,.18);outline:0}
+body[data-p="signup"] .hint{color:var(--soft)}
+body[data-p="signup"] .opt{font-weight:400;color:var(--soft)}
+body[data-p="signup"] .meter i{background:var(--edge);border-radius:99px}
+body[data-p="signup"] .meter[data-n="1"] i:nth-child(-n+1),body[data-p="signup"] .meter[data-n="2"] i:nth-child(-n+2){background:#d64545}
+body[data-p="signup"] .meter[data-n="3"] i:nth-child(-n+3),body[data-p="signup"] .meter[data-n="4"] i:nth-child(-n+4){background:var(--gold)}
+body[data-p="signup"] .meter[data-n="5"] i{background:var(--leaf)}
+body[data-p="signup"] .meter-label{color:var(--soft)}
+body[data-p="signup"] .rules,body[data-p="signup"] .match{color:var(--soft)}
+body[data-p="signup"] .rules li::before,body[data-p="signup"] .match::before{border:2px solid #b9cfc6}
+body[data-p="signup"] .rules li.ok,body[data-p="signup"] .match.ok{color:var(--pine)}
+body[data-p="signup"] .rules li.ok::before,body[data-p="signup"] .match.ok::before{background-color:var(--pine);border-color:var(--pine)}
+body[data-p="signup"] .match.no{color:#d64545}
+body[data-p="signup"] .match.no::before{border-color:#d64545}
+body:is([data-p="login"],[data-p="signup"]) .err{color:#c23535;font-weight:600}
+@media(max-width:900px){
+  body[data-p="signup"] .side{position:relative;height:auto;align-self:stretch}
+  body[data-p="signup"] .pane{padding:32px 20px 48px}
+}

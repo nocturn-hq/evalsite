@@ -1,5 +1,44 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap"><link rel="stylesheet" href="/css/style.css"></head>
-<body data-p="dashboard"><div class="nav"><a class="logo" href="/">YourSite</a><nav><a href="/dashboard.html">Dashboard</a><a href="#" onclick="logout()">Log out</a></nav></div><main class="wrap">
-<div class="grid"><div class="card"><h3>Your balance</h3><div id="bal"></div></div><div class="card"><h3>Next payout day</h3><p id="pay"></p></div><div class="card"><h3>Referrals</h3><p>People joined: <b id="refs">0</b></p><p>Each join earns you <span id="bonus"></span></p><input id="ref" readonly onclick="this.select()"></div></div><h2>To evaluate</h2><div id="tasks"></div>
-</main><script src="/js/app.js"></script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard | MawiE</title><link rel="icon" href="/img/logo.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/extra.css"><link rel="stylesheet" href="/css/dashboard.css"></head>
+<body data-p="dashboard"><div class="announce" id="announce"></div>
+<header class="nav"><div class="wrap"><a class="logo" href="/"><img src="/img/logo.png" alt="MawiE logo">MawiE</a><span class="cpill" id="hPill" hidden><span id="hFlag"></span><span id="hName"></span></span><nav><a href="/dashboard.html">Dashboard</a><a href="#" onclick="logout();return false">Log out</a></nav></div></header>
+<main class="page dash">
+<div class="top"><h1 id="hello">Welcome back</h1><p>Your balance, your invite link and tasks waiting for you.</p></div>
+
+<div class="derr" id="dashErr" hidden role="alert"><b>We could not load your account.</b><span id="dashErrMsg"></span><span>Open the site through your MawiE server (run <b>npm start</b>, then use the address it prints, usually http://localhost:3000) and log in again.</span><button type="button" id="retry">Try again</button></div>
+
+<section class="duo">
+ <div class="bal-card"><div><div class="label">Your balance</div><div id="bal"><span class="money"><b>$0.00</b></span></div></div>
+  <button type="button" class="wd-btn" id="wdBtn"><i data-i="wallet"></i>Withdraw</button>
+  <div class="payrow"><span class="label">Next payout day</span><span class="pill" id="pay">Not announced yet</span></div></div>
+ <div class="ref-card" id="invite"><span class="badge">Your biggest earner</span>
+  <h2>Get paid <span id="bonus"></span> for every friend you invite</h2>
+  <p>Share your link. The moment a friend joins with it, the money is added to your balance.</p>
+  <div class="copyrow"><input id="ref" readonly placeholder="Your invite link appears here" aria-label="Your invite link" onclick="this.select()"><button type="button" id="copy"><i data-i="copy"></i>Copy link</button></div>
+  <div class="share"><a id="shWa" target="_blank" rel="noopener" href="#"><i data-i="message"></i>WhatsApp</a><a id="shTg" target="_blank" rel="noopener" href="#"><i data-i="send"></i>Telegram</a></div>
+  <div class="next"><div class="nrow"><span id="goalTxt">Next goal: 5 friends</span><b id="goalAmt"></b></div><div class="gt"><i id="goalBar"></i></div></div>
+ </div>
+</section>
+
+<h2 class="sec" id="work">Start earning</h2>
+<p class="secp">Choose a task type. What is available to you is listed underneath.</p>
+<div class="notice" id="taskNotice" role="status"><span class="ni"><i data-i="clock"></i></span><div><b>Tasks temporarily unavailable</b><p>Due to technical issues affecting our task system, task availability has been temporarily suspended while our team resolves them. All task categories are scheduled to resume within one week. Your balance and referral earnings are not affected. We apologise for the inconvenience and thank you for your patience.</p></div></div>
+<div class="tiles" id="wtabs" role="tablist">
+ <button type="button" data-w="video" class="on" role="tab"><span class="ti2"><i data-i="video"></i></span><span class="tt"><b>Watch videos</b><small>Watch to the end and get paid</small></span><span class="cnt" id="cVideo">0</span></button>
+ <button type="button" data-w="survey" role="tab"><span class="ti2"><i data-i="survey"></i></span><span class="tt"><b>Surveys</b><small>Answer and earn rewards</small></span><span class="cnt" id="cSurvey">0</span></button>
+ <button type="button" data-w="app" role="tab"><span class="ti2"><i data-i="phone"></i></span><span class="tt"><b>App testing</b><small>Try apps and share feedback</small></span><span class="cnt" id="cApp">0</span></button>
+</div>
+<div class="wpane on" id="wvideo"><div class="empty"><p>Loading...</p></div></div><div class="wpane" id="wsurvey"><div class="empty"><p>Loading...</p></div></div><div class="wpane" id="wapp"><div class="empty"><p>Loading...</p></div></div>
+
+<h2 class="sec">Your progress</h2>
+<div class="strip">
+ <div class="si2"><span class="ki"><i data-i="layers"></i></span><div><small>Tasks waiting</small><b id="sTasks">0</b></div></div>
+ <div class="si2"><span class="ki"><i data-i="users"></i></span><div><small>Friends joined</small><b id="sRefs">0</b></div></div>
+ <div class="si2"><span class="ki"><i data-i="video"></i></span><div><small>Videos watched</small><b id="sVid">0</b></div></div>
+ <div class="si2"><span class="ki"><i data-i="calendar"></i></span><div><small>Member since</small><b id="sSince" style="font-size:1.25rem">-</b></div></div>
+</div>
+
+<h2 class="sec">Recent activity</h2>
+<div class="card"><ul class="acts" id="acts"><li><div class="am"><b>Nothing yet</b><small>Watch a video or answer a survey and your earnings show up here.</small></div></li></ul></div>
+</main>
+<div class="wd-modal" id="wdModal" hidden role="dialog" aria-modal="true" aria-labelledby="wdTitle"><div class="wd-box"><span class="wi"><i data-i="lock"></i></span><h3 id="wdTitle">Withdrawals not yet open</h3><p>The withdrawal link is not open yet. It will open on payday<span id="wdWhen"></span>. Your payout link will then be sent to your registered email address.</p><button type="button" id="wdOk">Okay, understood</button></div></div>
+<script src="/js/app.js"></script></body></html>

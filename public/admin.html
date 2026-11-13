@@ -1,5 +1,32 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap"><link rel="stylesheet" href="/css/style.css"></head>
-<body data-p="admin"><div class="nav"><a class="logo" href="/">YourSite</a><nav><a href="/dashboard.html">Dashboard</a><a href="#" onclick="logout()">Log out</a></nav></div><main class="wrap">
-<h2>Admin panel</h2><div class="grid"><div class="card form"><h3>Add survey or video</h3><form id="tf"><input name="title" placeholder="Title" required><select name="type"><option value="survey">Survey</option><option value="video">Video</option></select><input name="url" placeholder="Link" required><input name="rewardKes" type="number" placeholder="Reward in KES" required><p class="err"></p><button>Publish</button><p id="tmsg"></p></form></div><div class="card form"><h3>Payout day</h3><form id="pf"><input name="date" type="date" required><p class="err"></p><button>Save date</button><p id="pmsg"></p></form></div></div><div class="card"><h3>Users</h3><table><tr><th>Email</th><th>Country</th><th>Balance</th></tr><tbody id="users"></tbody></table></div>
-</main><script src="/js/app.js"></script></body></html>
+<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin | MawiE</title><link rel="icon" href="/img/logo.png">
+<script>try{var t=localStorage.adminTheme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"><link rel="stylesheet" href="/css/admin.css"></head>
+<body data-p="adminx">
+<div class="app">
+  <aside class="side" id="side" aria-label="Admin navigation">
+    <a class="brand" href="/admin.html#/overview"><img src="/img/logo.png" alt="">MawiE<span>Admin</span></a>
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      <button type="button" id="theme"></button>
+      <a href="/dashboard.html"><i data-i="home"></i>View the site</a>
+      <button type="button" onclick="logout()"><i data-i="logout"></i>Log out</button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <div class="main">
+    <header class="top">
+      <button type="button" class="b ic menu-b" id="menu" aria-label="Open menu"><i data-i="menu"></i></button>
+      <h1 id="title">Overview</h1>
+      <button type="button" class="kbar" id="kbar"><i data-i="search"></i><span>Search or jump to…</span><kbd>Ctrl K</kbd></button>
+      <div class="me"><span class="av" id="meav">A</span><span id="mename"></span></div>
+    </header>
+    <main id="view" tabindex="-1"></main>
+  </div>
+</div>
+<div class="ov" id="ov"></div>
+<aside class="drawer" id="drawer" aria-label="User details"></aside>
+<div class="dlg" id="dlg" role="dialog" aria-modal="true"></div>
+<div class="pal" id="pal" role="dialog" aria-label="Command palette"><input id="palq" placeholder="Type a page, a person, or a command" aria-label="Search commands"><ul id="pall"></ul></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="/js/app.js"></script><script src="/js/admin.js"></script>
+</body></html>
