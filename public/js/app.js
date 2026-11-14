@@ -205,7 +205,9 @@ const pages={
   $('#goalTxt').textContent=referrals>=G[G.length-1]?`Top goal reached: ${referrals} friends`:`Next goal: ${referrals} of ${g} friends`;
   $('#goalAmt').textContent='Earn '+plain(money(g*CFG.referrerKes,user.country));$('#goalBar').style.width=Math.min(100,referrals/g*100)+'%';
   $('#bonus').innerHTML=money(CFG.referrerKes,user.country);
-  const msg=encodeURIComponent('Join me on MawiE and get paid to rate videos and surveys: '+link+' (referral code: '+code+')');$('#shWa').href='https://wa.me/?text='+msg;$('#shTg').href='https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('Join me on MawiE and get paid to rate videos and surveys.');
+  const bonusTxt='$'+usdOf(CFG.joinKes).toFixed(2);
+  const shareTxt='I have been earning dollars on MawiE just for rating videos and answering surveys. \u{1F4B8}\nJoin with my link and you start with a '+bonusTxt+' welcome bonus, already waiting for you:\n'+link+'\n(My code: '+code+')';
+  const msg=encodeURIComponent(shareTxt);$('#shWa').href='https://wa.me/?text='+msg;$('#shTg').href='https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('Earn dollars rating videos and answering surveys. Join with my link and start with a '+bonusTxt+' welcome bonus. Code: '+code);
   const cc=$('#copyCode');
   cc.onclick=async()=>{try{await navigator.clipboard.writeText(code)}catch{const r=document.createRange();r.selectNodeContents($('#refCode'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);try{document.execCommand('copy')}catch{}}cc.innerHTML=ICON.check+'Copied';setTimeout(()=>cc.innerHTML=ICON.copy+'Copy code',1800)};
   const cp=$('#copy');

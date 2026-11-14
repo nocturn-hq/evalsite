@@ -38,11 +38,27 @@ const assetV=(()=>{let t=0,v='';return()=>{const now=Date.now();if(now-t<3000&&v
 const pageCache=new Map();
 // /login.html -> /login (permanent redirect), and /login serves the page
 app.get(/^\/([\w-]+)\.html$/,(q,r,next)=>{if(!fs.existsSync(path.join(PUB,q.params[0]+'.html')))return next();const i=q.originalUrl.indexOf('?');r.redirect(301,(q.params[0]==='index'?'/':'/'+q.params[0])+(i>-1?q.originalUrl.slice(i):''))});
-app.get(/^\/(?:([\w-]+))?$/,(q,r,next)=>{
+const escA=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// who owns this referral code (kept for a minute so link previews do not hit the database every time)
+const invCache=new Map();
+const inviter=async ref=>{ref=String(ref||'').trim().toLowerCase();if(!/^[a-z0-9]{4,12}$/.test(ref))return null;
+  const h=invCache.get(ref);if(h&&h.exp>Date.now())return h.u;
+  let u=null;try{u=await User.findOne({refCode:ref,banned:{$ne:true}}).select('username refCode').lean()}catch{}
+  if(invCache.size>500)invCache.clear();invCache.set(ref,{exp:Date.now()+60000,u});return u};
+const bonusUsd=async()=>{try{const c=await getCfg(),ke=JSON.parse(fs.readFileSync(path.join(PUB,'countries.json'),'utf8')).find(x=>x.iso2==='KE');return '$'+(c.joinKes/ke.rate_per_usd).toFixed(2)}catch{return 'special'}};
+app.get(/^\/(?:([\w-]+))?$/,async(q,r,next)=>{
   const f=path.join(PUB,(q.params[0]||'index')+'.html');let st;try{st=fs.statSync(f)}catch{return next()}
   const v=assetV();let c=pageCache.get(f);
   if(!c||c.m!==st.mtimeMs||c.v!==v){c={m:st.mtimeMs,v,html:fs.readFileSync(f,'utf8').replace(/((?:href|src)="\/(?:css|js)\/[\w.-]+)"/g,'$1?v='+v+'"')};pageCache.set(f,c)}
-  r.set('Cache-Control','no-cache').type('html').send(c.html)});
+  let html=c.html;
+  if(q.params[0]==='signup'){const inv=await inviter(q.query.ref);if(inv){const bonus=await bonusUsd(),code=inv.refCode.toUpperCase();
+    const t=inv.username+' invited you to MawiE',d='Join with code '+code+' and start with a '+bonus+' welcome bonus. Rate videos, answer surveys and get paid in US dollars. Your invite is waiting.';
+    const set=(re,v)=>{html=html.replace(re,(m,a)=>a+escA(v)+'">')};
+    set(/(<meta property="og:title" content=")[^"]*">/,t);set(/(<meta property="og:description" content=")[^"]*">/,d);
+    set(/(<meta name="description" content=")[^"]*">/,d);set(/(<meta property="og:url" content=")[^"]*">/,'https://www.mawiearn.site/signup?ref='+inv.refCode);
+    html=html.replace(/(<meta name="twitter:card" content=")[^"]*">/,'$1summary_large_image">');
+    html=html.replace('<title>Join MawiE free | Create your account</title>','<title>'+escA(t)+'</title>');}}
+  r.set('Cache-Control','no-cache').type('html').send(html)});
 app.use(express.static(PUB,{index:false,setHeaders:(res,p)=>{
   if(/\.woff2?$/i.test(p))res.setHeader('Cache-Control','public, max-age=31536000, immutable');
   else if(/\.(css|js)$/i.test(p))res.setHeader('Cache-Control',res.req.query&&res.req.query.v?'public, max-age=31536000, immutable':'no-cache');
