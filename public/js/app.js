@@ -145,21 +145,21 @@ function work(user,tasks){
 const pages={
  home(){
   const sel=$('#demoCountry'),usd=3.4,ke=C.find(c=>c.iso2==='KE');
-  const kes=Math.round(CFG.referrerKes),joinK=Math.round(CFG.joinKes);
-  document.querySelectorAll('.refkes').forEach(e=>e.textContent=kes);
-  document.querySelectorAll('.stripkes').forEach(e=>e.textContent='KSh '+kes);
-  document.querySelectorAll('.refplus').forEach(e=>e.textContent='+KSh '+kes);
-  $('#pairRefL').textContent='About $'+usdOf(CFG.referrerKes).toFixed(2)+' in US dollars';
-  $('#joinKesTxt').textContent='KSh '+joinK;
-  $('#chipRef').textContent='+KSh '+kes+' to your balance';
+  const d$=k=>'$'+usdOf(k).toFixed(2);
+  document.querySelectorAll('.refkes').forEach(e=>e.textContent=d$(CFG.referrerKes));
+  document.querySelectorAll('.stripkes').forEach(e=>e.textContent=d$(CFG.referrerKes));
+  document.querySelectorAll('.refplus').forEach(e=>e.textContent='+'+d$(CFG.referrerKes));
+  $('#pairRefL').textContent='Paid in US dollars';
+  $('#joinKesTxt').textContent=d$(CFG.joinKes);
+  $('#chipRef').textContent='+'+d$(CFG.referrerKes)+' to your balance';
   document.querySelectorAll('.spot').forEach(c=>c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px')}));
-  sel.innerHTML=C.map(c=>`<option value="${c.iso2}">${esc(c.country)}</option>`).join('');sel.value='KE';
+  sel.innerHTML=C.map(c=>`<option value="${c.iso2}">${esc(c.country)}</option>`).join('');sel.value='US';
   const show=()=>{const l=local(usd,C.find(c=>c.iso2===sel.value));$('#demoLocal').textContent=l||'Paid in US dollars'};
   sel.onchange=show;show();countUp($('#demoAmt'));
   const opts=C.map(c=>`<option value="${c.iso2}">${esc(c.country)}</option>`).join(''),cc=$('#calcCountry'),n=$('#calcN'),per=usdOf(CFG.referrerKes);
-  cc.innerHTML=opts;cc.value='KE';
-  const calc=()=>{const f=+n.value,t=f*per;$('#calcNum').textContent=f;$('#calcKes').textContent='KSh '+Math.round(f*CFG.referrerKes).toLocaleString();$('#calcUsd').textContent='About $'+t.toFixed(2);
-   $('#calcLocal').textContent=cc.value==='KE'?'Paid out in Kenya shillings':(local(t,C.find(c=>c.iso2===cc.value))||'Paid in US dollars');
+  cc.innerHTML=opts;cc.value='US';
+  const calc=()=>{const f=+n.value,t=f*per;$('#calcNum').textContent=f;$('#calcKes').textContent='$'+t.toFixed(2);$('#calcUsd').textContent='';
+   $('#calcLocal').textContent=local(t,C.find(c=>c.iso2===cc.value))||'Paid in US dollars';
    document.querySelectorAll('#presets button').forEach(b=>b.classList.toggle('on',+b.dataset.n===f))};
   n.oninput=calc;cc.onchange=calc;
   document.querySelectorAll('#presets button').forEach(b=>b.onclick=()=>{n.value=b.dataset.n;calc()});calc();
