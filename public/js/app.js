@@ -48,8 +48,9 @@ const hydrate=(root=document)=>root.querySelectorAll('[data-i]').forEach(e=>{if(
 hydrate();
 const yr=document.getElementById('yr');if(yr)yr.textContent=new Date().getFullYear();
 
-const _call=async(p,b,quiet)=>{const r=await fetch('/api'+p,{method:b?'POST':'GET',headers:{'Content-Type':'application/json',Authorization:'Bearer '+(localStorage.t||''),'x-gate':sessionStorage.gateT||''},body:b?JSON.stringify(b):undefined});
-  const j=await r.json().catch(()=>{throw new Error(r.status===404?'The server does not have this feature yet. It is running older code. Stop it and start it again with npm start.':'The server sent an unexpected reply (status '+r.status+').')});if(!r.ok){if(j.gate&&document.body.dataset.p==='adminx'&&!quiet){sessionStorage.removeItem('gateT');const last=+sessionStorage.gateR||0;if(Date.now()-last>5000){sessionStorage.gateR=Date.now();location.reload()}throw new Error(j.error)}if(r.status===401&&!['home','login','signup'].includes(document.body.dataset.p))location='/login.html?next='+encodeURIComponent(location.pathname+location.hash);throw new Error(j.error||'Something went wrong')}return j};
+const NET_MSG='No internet connection. Please check your network and try again.';
+const _call=async(p,b,quiet)=>{let r;try{r=await fetch('/api'+p,{method:b?'POST':'GET',headers:{'Content-Type':'application/json',Authorization:'Bearer '+(localStorage.t||''),'x-gate':sessionStorage.gateT||''},body:b?JSON.stringify(b):undefined})}catch{throw new Error(navigator.onLine===false?NET_MSG:'We could not reach MawiE right now. Please check your connection and try again.')}
+  const j=await r.json().catch(()=>{throw new Error(r.status===404?'This feature is temporarily unavailable. Please try again shortly.':r.status>=500?'MawiE is having a problem right now. Please try again in a moment.':'Something went wrong. Please try again.')});if(!r.ok){if(j.gate&&document.body.dataset.p==='adminx'&&!quiet){sessionStorage.removeItem('gateT');const last=+sessionStorage.gateR||0;if(Date.now()-last>5000){sessionStorage.gateR=Date.now();location.reload()}throw new Error(j.error)}if(r.status===401&&!['home','login','signup'].includes(document.body.dataset.p))location='/login.html?next='+encodeURIComponent(location.pathname+location.hash);throw new Error(j.error||'Something went wrong')}return j};
 // Admin answers are kept for 20 seconds, and any change (a POST) clears them. Going back to a page, or hovering a menu item first, feels instant.
 const _gc=new Map(),_clone=x=>typeof structuredClone==='function'?structuredClone(x):x;
 const api=(p,b,quiet)=>{
@@ -65,7 +66,9 @@ const money=(kes,cc)=>{const usd=usdOf(kes),l=local(usd,C.find(x=>x.iso2===cc));
   return `<span class="money"><b>$${usd.toFixed(2)}</b>`+(l?`<small>${l}</small>`:'')+'</span>'};
 const countUp=el=>{const t=parseFloat(el.textContent.slice(1));if(matchMedia('(prefers-reduced-motion:reduce)').matches||!t)return;const s=performance.now();(function f(n){const p=Math.min((n-s)/900,1);el.textContent='$'+(t*(1-Math.pow(1-p,3))).toFixed(2);if(p<1)requestAnimationFrame(f)})(s)};
 const logout=()=>{localStorage.removeItem('t');location='/'};
-const submit=(id,fn)=>$(id).onsubmit=async e=>{e.preventDefault();const f=e.target,er=f.querySelector('.err');if(er)er.textContent='';try{await fn(Object.fromEntries(new FormData(f)))}catch(x){if(er)er.textContent=x.message}};
+// Shows a spinner on a button while work is running, and blocks double clicks.
+const busy=async(btn,fn)=>{if(!btn)return fn();if(btn.dataset.busy)return;btn.dataset.busy=1;btn.classList.add('is-loading');btn.setAttribute('aria-busy','true');btn.disabled=true;try{return await fn()}finally{delete btn.dataset.busy;btn.classList.remove('is-loading');btn.removeAttribute('aria-busy');btn.disabled=false}};
+const submit=(id,fn)=>$(id).onsubmit=async e=>{e.preventDefault();const f=e.target,er=f.querySelector('.err'),b=f.querySelector('button[type=submit]');if(er)er.textContent='';await busy(b,async()=>{try{await fn(Object.fromEntries(new FormData(f)))}catch(x){if(er)er.textContent=x.message}})};
 
 // show/hide buttons on password fields
 document.querySelectorAll('[data-toggle]').forEach(b=>{const i=document.getElementById(b.dataset.toggle);b.innerHTML=ICON.eye;
@@ -77,7 +80,7 @@ const pwOk=p=>Object.values(PW).every(t=>t(p));
 
 // ---------- dashboard work area: videos, surveys, app testing ----------
 const taskCard=(t,user)=>{const safe=/^https?:\/\//i.test(t.url)?t.url:'#',lab=t.type==='app'?'App testing':'Survey',verb=t.type==='app'?'Open the app':'Open the survey';
- return `<div class="card task"><div class="top"><span class="tag">${ICON[t.type==='app'?'phone':'survey']}${lab}</span><div class="reward">${money(t.rewardKes,user.country)}</div></div><h3>${esc(t.title)}</h3>${t.description?`<p class="tdesc">${esc(t.description)}</p>`:''}<a class="open" href="${esc(safe)}" target="_blank" rel="noopener">${ICON.open}${verb}</a><textarea id="a${t._id}" aria-label="Your feedback" placeholder="${t.type==='app'?'Write what you found while testing':'Write your answers'}"></textarea><button type="button" onclick="evalTask('${t._id}')">Submit</button></div>`};
+ return `<div class="card task"><div class="top"><span class="tag">${ICON[t.type==='app'?'phone':'survey']}${lab}</span><div class="reward">${money(t.rewardKes,user.country)}</div></div><h3>${esc(t.title)}</h3>${t.description?`<p class="tdesc">${esc(t.description)}</p>`:''}<a class="open" href="${esc(safe)}" target="_blank" rel="noopener">${ICON.open}${verb}</a><textarea id="a${t._id}" aria-label="Your feedback" placeholder="${t.type==='app'?'Write what you found while testing':'Write your answers'}"></textarea><button type="button" onclick="evalTask('${t._id}',this)">Submit</button></div>`};
 const emptyBox=(msg)=>`<div class="empty">${ICON.checkc}${msg}</div>`;
 
 let ytReady;const loadYT=()=>ytReady||(ytReady=new Promise(res=>{if(window.YT&&YT.Player)return res();const s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';document.head.appendChild(s);window.onYouTubeIframeAPIReady=res}));
@@ -185,7 +188,7 @@ const pages={
  async dashboard(){
   wireTiles();
   const fail=e=>{$('#dashErr').hidden=false;$('#dashErrMsg').textContent=(e&&e.message)||'Something went wrong.';['#wvideo','#wsurvey','#wapp'].forEach(q=>$(q).innerHTML=emptyBox('Tasks could not be loaded. See the message at the top of the page.'))};
-  $('#retry').onclick=()=>location.reload();
+  $('#retry').onclick=e=>busy(e.currentTarget,()=>new Promise(r=>{setTimeout(()=>location.reload(),400)}));
   let me;try{me=await api('/me')}catch(e){fail(e);return}
   const{user,payoutDate,referrals}=me;
   $('#hello').textContent=user.username?`Hi, ${user.username}`:'Welcome back';
@@ -218,7 +221,7 @@ const pages={
  },
  adminx(){window.adminInit().catch(e=>{document.body.innerHTML='<p style="padding:40px;font:16px system-ui;max-width:560px"><b>The admin panel could not open.</b><br>'+esc(e&&e.message||e)+'<br><br><a href="/mawira.html">Try again</a> &middot; <a href="/dashboard.html">Go to your dashboard</a></p>'})}
  };
-window.evalTask=async id=>{try{await api(`/tasks/${id}/evaluate`,{answer:$('#a'+id).value});location.reload()}catch(x){alert(x.message)}};
+window.evalTask=(id,btn)=>busy(btn||(window.event&&window.event.currentTarget),async()=>{try{await api(`/tasks/${id}/evaluate`,{answer:$('#a'+id).value});location.reload()}catch(x){alert(x.message)}});
 window.logout=logout;
 // admin page: start the first requests now, in parallel, instead of after the country list has loaded
 if(document.body.dataset.p==='adminx'){api('/me',undefined,1).catch(()=>{});api('/admin/gate',undefined,1).catch(()=>{});if(sessionStorage.gateT&&!/^#\/(?!overview)/.test(location.hash))api('/admin/overview?range=14',undefined,1).catch(()=>{})}

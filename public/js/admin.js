@@ -19,7 +19,7 @@ const askGate=state=>new Promise(done=>{
    <a class="gback" href="/dashboard.html">Back to my dashboard</a></form>`;
   document.body.appendChild(el);const f=el.querySelector('form');el.querySelector('input').focus();
   f.onsubmit=async e=>{e.preventDefault();const er=f.querySelector('.err');er.textContent='';
-    try{const r=await api('/admin/gate/'+(setup?'setup':'unlock'),Object.fromEntries(new FormData(f)));sessionStorage.gateT=r.token;el.remove();done()}catch(x){er.textContent=x.message}}});
+    await busy(f.querySelector('button[type=submit]'),async()=>{try{const r=await api('/admin/gate/'+(setup?'setup':'unlock'),Object.fromEntries(new FormData(f)));sessionStorage.gateT=r.token;el.remove();done()}catch(x){er.textContent=x.message}})}});
 {const st=await gateP;if(st===null)throw new Error('Could not check the admin password. Try again.');if(st!=='open')await askGate(st)}
 
 Object.assign(ICON,{
@@ -157,7 +157,7 @@ function drawChart(el,tip,days,vals,fmt,int){
 }
 V.overview=async live=>{
   const st=S.overview,o=await api('/admin/overview?range='+st.range);if(!live())return;
-  if(!Array.isArray(o.earned)||!Array.isArray(o.recentTx))throw new Error('The server is running an older version of the code. Stop it, then start it again with npm start.');
+  if(!Array.isArray(o.earned)||!Array.isArray(o.recentTx))throw new Error('This page is being updated. Please refresh in a moment.');
   const pct=([a,b])=>b?Math.round((a-b)/b*100):(a?null:0);
   const dl=p=>{const v=pct(p),c=v===0?'fl':(v===null||v>0)?'':'dn';return `<span class="dl ${c}">${v===null?'new':(v>0?'+':'')+v+'%'}</span>`};
   const kpi=(cls,ic,l,v,sub)=>`<div class="kpi ${cls}"><div class="kh"><span class="ki">${ICON[ic]}</span>${l}</div><b>${v}</b><div class="sub">${sub}</div></div>`;
@@ -398,7 +398,7 @@ V.create=async live=>{
    <div class="f"><label for="ur">Link</label><input id="ur" name="url" type="url" placeholder="https://"></div><p class="err" role="alert"></p><button type="submit" class="b pri">Publish task</button></form></div>
    <div class="card"><h3>Tips</h3><ul class="list"><li>Say what a good answer looks like in the description.</li><li>People need at least five characters to submit.</li><li>Read their answers in Submissions. You can remove weak ones.</li></ul></div></div>`;
   $('#rw').oninput=e=>$('#rh').textContent=+e.target.value>0?`About ${usdS(+e.target.value)} per user`:'';
-  $('#tf').onsubmit=async e=>{e.preventDefault();const er=$('.err',e.target);er.textContent='';try{const f=Object.fromEntries(new FormData(e.target));f.rewardKes=+f.rewardKes;await api('/admin/tasks',f);e.target.reset();$('#rh').textContent='';toast('Task published')}catch(x){er.textContent=x.message}};
+  $('#tf').onsubmit=async e=>{e.preventDefault();const er=$('.err',e.target),fm=e.target;er.textContent='';await busy(fm.querySelector('button[type=submit]'),async()=>{try{const f=Object.fromEntries(new FormData(fm));f.rewardKes=+f.rewardKes;await api('/admin/tasks',f);fm.reset();$('#rh').textContent='';toast('Task published')}catch(x){er.textContent=x.message}})};
 };
 
 // ---------- ledger + audit ----------
@@ -438,7 +438,7 @@ V.settings=async live=>{
     <p class="err" id="ge"></p><button class="b pri" type="submit">Change admin password</button></form></div></div>`;
   const prev=()=>{const t=$('#bt').value.trim();$('#bc').textContent=$('#bt').value.length;$('#bp').textContent=t||'The banner is hidden';$('#bp').style.opacity=t?1:.5};$('#bt').oninput=prev;prev();
   const hint=(i,h)=>{const f=()=>$(h).textContent=+$(i).value>0?`About ${usdS(+$(i).value)}`:'';$(i).oninput=f;f()};hint('#rr','#rrh');hint('#rj','#rjh');
-  $$('form[data-f]').forEach(f=>f.onsubmit=async e=>{e.preventDefault();const er=$('.err',f);er.textContent='';try{await api('/admin/settings',Object.fromEntries(new FormData(f)));toast('Saved')}catch(x){er.textContent=x.message}});
+  $$('form[data-f]').forEach(f=>f.onsubmit=async e=>{e.preventDefault();const er=$('.err',f);er.textContent='';await busy(f.querySelector('button[type=submit]'),async()=>{try{await api('/admin/settings',Object.fromEntries(new FormData(f)));toast('Saved')}catch(x){er.textContent=x.message}})});
   $('#so2').onchange=async e=>{if(!await act(()=>api('/admin/settings',{signupsOpen:e.target.checked}),e.target.checked?'Sign-ups are open':'Sign-ups are paused'))e.target.checked=!e.target.checked};
   $('#ex2').onclick=()=>act(()=>download('/admin/users.csv','mawie-users.csv'),'Export downloaded');
   // wallpaper: shrink the picture in the browser first so the upload stays small
@@ -453,7 +453,7 @@ V.settings=async live=>{
     try{pick=await shrink(f);$('#wp').innerHTML=`<img src="${pick}" alt="Preview of the new wallpaper">`;$('#wu').disabled=false}catch(x){$('#we').textContent=x&&x.message==='too big'?'That picture is too detailed. Try a simpler or smaller one.':'That file could not be read as a picture'}};
   $('#wu').onclick=async()=>{if(!pick)return;$('#wu').disabled=true;try{await api('/admin/wallpaper',{image:pick});toast('Wallpaper saved');V.settings(live)}catch(x){$('#we').textContent=x.message;$('#wu').disabled=false}};
   $('#wr').onclick=()=>act(async()=>{await api('/admin/wallpaper/remove',{});V.settings(live)},'Wallpaper removed');
-  $('#gf').onsubmit=async e=>{e.preventDefault();const er=$('#ge');er.textContent='';try{await api('/admin/gate/change',Object.fromEntries(new FormData(e.target)));e.target.reset();toast('Admin password changed')}catch(x){er.textContent=x.message}};
+  $('#gf').onsubmit=async e=>{e.preventDefault();const er=$('#ge'),fm=e.target;er.textContent='';await busy(fm.querySelector('button[type=submit]'),async()=>{try{await api('/admin/gate/change',Object.fromEntries(new FormData(fm)));fm.reset();toast('Admin password changed')}catch(x){er.textContent=x.message}})};
 };
 
 // ---------- command palette ----------

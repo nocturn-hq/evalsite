@@ -206,3 +206,11 @@ html.mc-lock{overflow:hidden}
   :is(#mcw,#mca) .mc-back{display:grid}
 }
 .nv .mc-nb{margin-left:auto;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--sun);color:#15191c;font:700 .72rem/20px var(--bdy);text-align:center}
+
+/* loading spinner for buttons */
+button.is-loading,.btn.is-loading{position:relative;color:transparent!important;pointer-events:none;cursor:progress}
+button.is-loading>*,.btn.is-loading>*{opacity:0}
+button.is-loading::after,.btn.is-loading::after{content:"";position:absolute;inset:0;margin:auto;width:20px;height:20px;border-radius:50%;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;animation:btnSpin .7s linear infinite}
+button:disabled.is-loading{opacity:1}
+@keyframes btnSpin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){button.is-loading::after,.btn.is-loading::after{animation-duration:1.6s}}
