@@ -48,8 +48,15 @@ const hydrate=(root=document)=>root.querySelectorAll('[data-i]').forEach(e=>{if(
 hydrate();
 const yr=document.getElementById('yr');if(yr)yr.textContent=new Date().getFullYear();
 
-const api=async(p,b)=>{const r=await fetch('/api'+p,{method:b?'POST':'GET',headers:{'Content-Type':'application/json',Authorization:'Bearer '+(localStorage.t||''),'x-gate':sessionStorage.gateT||''},body:b?JSON.stringify(b):undefined});
-  const j=await r.json().catch(()=>{throw new Error(r.status===404?'The server does not have this feature yet. It is running older code. Stop it and start it again with npm start.':'The server sent an unexpected reply (status '+r.status+').')});if(!r.ok){if(j.gate&&document.body.dataset.p==='adminx'){sessionStorage.removeItem('gateT');const last=+sessionStorage.gateR||0;if(Date.now()-last>5000){sessionStorage.gateR=Date.now();location.reload()}throw new Error(j.error)}if(r.status===401&&!['home','login','signup'].includes(document.body.dataset.p))location='/login.html?next='+encodeURIComponent(location.pathname+location.hash);throw new Error(j.error||'Something went wrong')}return j};
+const _call=async(p,b,quiet)=>{const r=await fetch('/api'+p,{method:b?'POST':'GET',headers:{'Content-Type':'application/json',Authorization:'Bearer '+(localStorage.t||''),'x-gate':sessionStorage.gateT||''},body:b?JSON.stringify(b):undefined});
+  const j=await r.json().catch(()=>{throw new Error(r.status===404?'The server does not have this feature yet. It is running older code. Stop it and start it again with npm start.':'The server sent an unexpected reply (status '+r.status+').')});if(!r.ok){if(j.gate&&document.body.dataset.p==='adminx'&&!quiet){sessionStorage.removeItem('gateT');const last=+sessionStorage.gateR||0;if(Date.now()-last>5000){sessionStorage.gateR=Date.now();location.reload()}throw new Error(j.error)}if(r.status===401&&!['home','login','signup'].includes(document.body.dataset.p))location='/login.html?next='+encodeURIComponent(location.pathname+location.hash);throw new Error(j.error||'Something went wrong')}return j};
+// Admin answers are kept for 20 seconds, and any change (a POST) clears them. Going back to a page, or hovering a menu item first, feels instant.
+const _gc=new Map(),_clone=x=>typeof structuredClone==='function'?structuredClone(x):x;
+const api=(p,b,quiet)=>{
+  if(b){_gc.clear();return _call(p,b,quiet)}
+  if(!/^\/(admin\/|me$)/.test(p)||/[?&]fresh=/.test(p))return _call(p,b,quiet);
+  const h=_gc.get(p),now=Date.now();if(h&&h.exp>now)return h.pr.then(_clone);
+  const pr=_call(p,b,quiet);_gc.set(p,{exp:now+20000,pr});pr.catch(()=>_gc.delete(p));return pr.then(_clone)};
 
 // Dollars first, local-currency estimate below. Amounts are stored in KES.
 const usdOf=kes=>kes/C.find(x=>x.iso2==='KE').rate_per_usd;
@@ -210,5 +217,16 @@ const pages={
  };
 window.evalTask=async id=>{try{await api(`/tasks/${id}/evaluate`,{answer:$('#a'+id).value});location.reload()}catch(x){alert(x.message)}};
 window.logout=logout;
-fetch('/api/announcement').then(r=>r.json()).then(j=>{const b=$('#announce');if(b)b.textContent=j.text}).catch(()=>{});
-Promise.all([fetch('/countries.json').then(r=>r.json()),fetch('/api/config').then(r=>r.json()).catch(()=>CFG)]).then(([d,c])=>{C=d;CFG={...CFG,...c};pages[document.body.dataset.p]?.()}).catch(()=>{});
+// admin page: start the first requests now, in parallel, instead of after the country list has loaded
+if(document.body.dataset.p==='adminx'){api('/me',undefined,1).catch(()=>{});api('/admin/gate',undefined,1).catch(()=>{});if(sessionStorage.gateT&&!/^#\/(?!overview)/.test(location.hash))api('/admin/overview?range=14',undefined,1).catch(()=>{})}
+// Site banner (text is set in the admin panel, Settings). A visitor can close it; it comes back when the message changes.
+const showBanner=text=>{const b=$('#announce');if(!b)return;text=String(text||'').trim();
+  const key='ann:'+text;let gone=false;try{gone=!!text&&localStorage.getItem('annX')===key}catch{}
+  if(!text||gone){b.textContent='';return}
+  b.textContent='';b.setAttribute('role','status');
+  const ico=document.createElement('span');ico.className='ann-ico';ico.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>';
+  const t=document.createElement('span');t.className='ann-t';t.textContent=text;
+  const x=document.createElement('button');x.type='button';x.className='ann-x';x.setAttribute('aria-label','Dismiss message');x.textContent='\u00d7';
+  x.onclick=()=>{try{localStorage.setItem('annX',key)}catch{}b.remove()};
+  b.append(ico,t,x)};
+Promise.all([fetch('/countries.json').then(r=>r.json()),fetch('/api/config').then(r=>r.json()).catch(()=>CFG)]).then(([d,c])=>{C=d;CFG={...CFG,...c};showBanner(c.announcement);pages[document.body.dataset.p]?.()}).catch(()=>{});

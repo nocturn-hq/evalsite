@@ -31,8 +31,31 @@ The dashboard uses `public/dashboard.html` with its own stylesheet `public/css/d
 The invite reward comes from Settings in the admin panel (referral bonus). Set it there to change it, for example to 84 KES.
 
 ## Speed
-- Run `npm install` once after updating (it adds `compression`, which makes pages and data download smaller).
-- New database indexes are created automatically the first time the server starts. The first start after the update can be slow for a minute.
-- The admin overview is prepared when the server starts and old results are shown instantly while new ones load.
-- If the panel is still slow, look at the terminal for lines starting with `Slow request:`. They show which request is slow and how many milliseconds it took.
-- Keep your database and your server close to each other. A server on your own computer talking to a database in another continent adds delay to every query. In MongoDB Atlas, pick the region nearest to you and your visitors.
+- Run `npm install` once after updating (`compression` makes pages and data download smaller).
+- Fonts are now served from this site (`public/fonts`), not from Google. Stylesheets and scripts are cached for a year by the browser; the pages add a `?v=` code that changes whenever a file changes, so updates still show at once.
+- The admin panel keeps the answers it just loaded for 20 seconds, starts loading the next page while the mouse is over its menu item, and starts its first requests in parallel. Any change you save clears that cache, so you never see stale numbers after an edit.
+- Slow whole-collection totals (overview, leaderboard, ledger totals) are worked out once and reused for 1 to 5 minutes. The Refresh button on Overview forces a fresh calculation.
+- User search uses lowercase matching so MongoDB can use its indexes. Unfiltered user and ledger counts come from collection metadata (instant).
+- Look in the terminal for lines starting with `Slow request:` to see which request is slow.
+- Keep your database and server in the same region (in Atlas, pick the region nearest your server and visitors). A server in one continent talking to a database in another adds delay to every query. On free hosting that sleeps, the first visit after a quiet period is slow whatever the code does.
+
+## Storage (keeping MongoDB small)
+- MongoDB already compresses data on disk, so savings come from storing less. The server also compresses traffic between itself and Atlas.
+- Old login-day rows expire after 100 days, admin audit rows after 180 days, unfinished watch timers after 2 days. The number of login days per person is kept on the user, so nothing visible is lost. The money ledger is never deleted.
+- Rows that never change no longer store `updatedAt`; empty-string defaults and duplicate indexes were removed.
+- The wallpaper is shrunk in the browser to under about 560 KB (WebP when possible) and stored as raw bytes, not base64 text. An older wallpaper is converted automatically on first start.
+- On first start the server runs a one-time clean-up: it drops indexes that are no longer used, builds the new ones, and counts login days from the old rows. Do not stop the server during that first start.
+
+## Security notes
+- Set a long random `JWT_SECRET`: `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`. The server refuses to start with the example value. Changing it logs everyone out once.
+- Login: 20 tries per 15 minutes per visitor address, and 8 wrong passwords in a row lock that address and account pair for 15 minutes. Sign-up: 10 per hour per address. The whole API: 600 requests per minute per address. If your host puts a proxy in front of the server (Render, Railway and Fly are detected automatically), set `TRUST_PROXY=1` so these limits see the real visitor address.
+- Resetting a user's password in the admin panel also logs out every device that user was signed in on.
+- Browser protections (a Content-Security-Policy that only allows the YouTube player from other sites, no framing, no content-type guessing) are sent on every page.
+- Not done yet: email verification. Anyone can sign up with any Gmail address they type, whether or not they own it. Do this before paying out real money to referrals at scale.
+- Always set the video length in seconds when you add videos. Without it the server has to trust the length the player reports, so a cheater could shorten it.
+
+## Support chat
+- A round chat button (your chat icon) sits at the bottom right of every page. Logged-out visitors see a welcome and Log in / Create account buttons. Logged-in users get a small window with a welcome message and quick questions; the expand button makes it full screen (Esc shrinks, then closes).
+- Admin: open Support chat in the panel menu (a number shows unread messages). On a laptop it is two columns like WhatsApp Web; on a phone you see the list of people and tapping one opens that chat full screen, with a back arrow. Search a username or Gmail to start a chat with someone who has not written yet.
+- In a chat: reply to a message (quote), react (love, like, funny, done, great, fast), copy, delete/unsend, typing indicator, sent and read ticks, day dividers. Double-click a message for a quick love; press and hold on a phone, or click the small arrow, for the menu.
+- Files: `public/js/chat.js`, `public/css/chat.css`, the admin view in `public/js/admin.js` (V.chats), routes at the end of `server.js` and `ChatMsg` in `models.js`. Messages expire after 60 days. The page checks for news every 2.5 seconds while a chat is open and every 20 seconds (users) or 15 seconds (admin menu number) otherwise. No new packages.

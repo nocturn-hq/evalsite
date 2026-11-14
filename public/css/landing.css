@@ -8,7 +8,6 @@ body[data-p="home"] .wrap{max-width:1180px}
 body[data-p="home"] h1,body[data-p="home"] h2,body[data-p="home"] h3{letter-spacing:-.025em}
 
 /* top banner and nav */
-body[data-p="home"] .announce{background:var(--gold);border-bottom:0;font-size:.9rem;padding:9px 16px}
 body[data-p="home"] .nav{background:rgba(6,32,26,.86);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid rgba(255,255,255,.09)}
 body[data-p="home"] .nav .wrap{height:70px}
 body[data-p="home"] .logo{color:#fff}

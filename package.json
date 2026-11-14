@@ -1,9 +1,10 @@
 {
   "name": "evalsite",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "start": "node server.js",
-    "countries": "node scripts/merge-countries.js"
+    "countries": "node scripts/merge-countries.js",
+    "audit": "npm audit --omit=dev"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -12,5 +13,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.0",
     "compression": "^1.7.4"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

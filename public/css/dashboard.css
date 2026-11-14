@@ -6,7 +6,6 @@ body[data-p="dashboard"]{
   background:#fff;font-family:var(--bd);font-size:16px;overflow-x:hidden}
 body[data-p="dashboard"] h1,body[data-p="dashboard"] h2,body[data-p="dashboard"] h3{font-family:var(--hd);letter-spacing:-.025em}
 
-body[data-p="dashboard"] .announce{background:#fef3c7;color:#92400e;border:0;font-weight:600}
 body[data-p="dashboard"] .nav{background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 body[data-p="dashboard"] .nav .wrap{max-width:1080px;gap:12px}
 body[data-p="dashboard"] .logo{font-family:var(--hd);font-weight:800;font-size:1.3rem}

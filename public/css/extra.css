@@ -1,6 +1,19 @@
 /* banners */
-.announce{background:var(--saffron);color:var(--ink);font:700 .93rem var(--bd);text-align:center;padding:10px 16px;border-bottom:var(--bw) solid var(--ink)}
-.announce:empty{display:none}
+.announce{position:relative;z-index:40;display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 52px 10px 16px;color:#fff;
+  background:linear-gradient(100deg,#08493b 0%,#0b6b55 45%,#12856a 100%);box-shadow:0 1px 0 rgba(255,255,255,.12) inset,0 6px 20px -8px rgba(8,73,59,.55);
+  font:600 .92rem/1.4 var(--bd);text-align:left;overflow:hidden;animation:annIn .45s cubic-bezier(.2,.8,.2,1) both}
+.announce::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.14) 50%,transparent 65%);transform:translateX(-100%);animation:annShine 5s ease-in-out 1s infinite}
+.announce:empty,.announce[hidden]{display:none}
+.announce .ann-ico{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#f4b730;color:#15191c;box-shadow:0 0 0 4px rgba(244,183,48,.22)}
+.announce .ann-ico svg{width:15px;height:15px}
+.announce .ann-t{max-width:900px;overflow-wrap:anywhere}
+.announce .ann-x{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:0;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;font:400 1.2rem/1 var(--bd);display:grid;place-items:center;transition:background .15s}
+.announce .ann-x:hover,.announce .ann-x:focus-visible{background:rgba(255,255,255,.28);outline:0}
+body:is([data-p="login"],[data-p="signup"]) .announce{position:fixed;top:0;left:0;right:0}
+@keyframes annIn{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:none}}
+@keyframes annShine{0%,60%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@media(max-width:560px){.announce{font-size:.85rem;padding:9px 46px 9px 12px;gap:9px}.announce .ann-ico{width:24px;height:24px}}
+@media(prefers-reduced-motion:reduce){.announce,.announce::before{animation:none}}
 .ticker{background:var(--saffron);color:var(--ink);overflow:hidden;white-space:nowrap;font:700 .95rem var(--bd);padding:11px 0;border-bottom:var(--bw) solid var(--ink)}
 .ticker div{display:inline-block;padding-left:100%;animation:tick 38s linear infinite}
 .ticker span{margin:0 30px;display:inline-flex;align-items:center;gap:10px}

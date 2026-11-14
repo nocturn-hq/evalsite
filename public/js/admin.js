@@ -99,6 +99,7 @@ $('#meav').textContent=(meRes.user.username||meRes.user.email)[0];$('#mename').t
 const ROUTES=[
  {id:'overview',t:'Overview',i:'grid',g:'Insights'},
  {id:'users',t:'Users',i:'users',g:'People'},
+ {id:'chats',t:'Support chat',i:'message',g:'People'},
  {id:'submissions',t:'Submissions',i:'inbox',g:'People'},
  {id:'referrals',t:'Referrals',i:'gift',g:'People'},
  {id:'leaderboard',t:'Leaderboard',i:'trophy',g:'People'},
@@ -115,6 +116,14 @@ const S={ // remembered filters, so going back to a page feels the same
  users:{q:'',status:'',country:'',sort:'new',page:1},submissions:{type:'',q:'',page:1},tasks:{type:'',q:'',status:''},
  ledger:{kind:'',q:'',page:1},audit:{page:1},overview:{range:14,metric:'logins'}};
 const V={};
+// warm the next page while the pointer is over its menu item (or a finger touches it), so the click opens it at once
+{const PRE={overview:()=>'/admin/overview?range='+S.overview.range,
+  users:()=>'/admin/users?'+new URLSearchParams({q:S.users.q,status:S.users.status,country:S.users.country,sort:S.users.sort,page:S.users.page,limit:25}),
+  submissions:()=>'/admin/submissions?'+new URLSearchParams(S.submissions),referrals:()=>'/admin/referrals',leaderboard:()=>'/admin/leaderboard',
+  tasks:()=>'/admin/tasks?'+new URLSearchParams({type:S.tasks.type,q:S.tasks.q}),ledger:()=>'/admin/transactions?'+new URLSearchParams(S.ledger),
+  audit:()=>'/admin/audit?page='+S.audit.page,settings:()=>'/admin/settings'};
+ const warm=e=>{const a=e.target.closest&&e.target.closest('a[data-r]'),f=a&&PRE[a.dataset.r];if(f&&a.dataset.r!==R.cur)api(f(),undefined,1).catch(()=>{})};
+ ['pointerover','focusin','touchstart'].forEach(ev=>$('#nav').addEventListener(ev,warm,{passive:true}))}
 const route=async()=>{
   const id=(location.hash.match(/^#\/(\w+)/)||[])[1],r=ROUTES.find(x=>x.id===id)||ROUTES[0];
   R.cur=r.id;R.chartRedraw=null;const my=++R.tok,live=()=>my===R.tok;
@@ -124,6 +133,10 @@ const route=async()=>{
   window.scrollTo(0,0);
 };
 window.addEventListener('hashchange',route);
+// unread support messages show as a number on the menu item
+const chatBadge=n=>{const a=$('#nav a[data-r=chats]');if(!a)return;let b=a.querySelector('.mc-nb');if(!n){if(b)b.remove();return}
+  if(!b){b=document.createElement('span');b.className='mc-nb';a.appendChild(b)}b.textContent=n>99?'99+':n};
+{const chk=()=>{if(!document.hidden)api('/admin/chats/unread?fresh=1',undefined,1).then(d=>chatBadge(d.n)).catch(()=>{})};chk();setInterval(chk,15000)}
 
 // ---------- overview ----------
 const niceStep=(x,int)=>{if(x<=0)return 1;const p=10**Math.floor(Math.log10(x)),f=x/p,n=f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10;return int?Math.max(1,Math.ceil(n*p)):n*p};
@@ -295,6 +308,36 @@ V.leaderboard=async live=>{
   $('#view').innerHTML=pagehead('Leaderboard','Your top 20 in each list.')+`<div class="g3">${box('Highest balances',l.richest,u=>usdS(u.balanceKes||0))}${box('Most tasks completed',l.workers,u=>u.n+' tasks')}${box('Top inviters',l.referrers,u=>u.n+' invited')}</div>`;
 };
 
+
+// ---------- support chat: list of people on the left, the conversation on the right (one screen at a time on a phone) ----------
+V.chats=async live=>{
+  const st=S.chats||(S.chats={q:'',tab:'all',id:null});
+  $('#view').innerHTML=pagehead('Support chat','Messages from your users. Pick a person to reply.')+`<div class="mc-admin" data-view="${st.id?'chat':'list'}">
+   <aside class="mc-list"><div class="mc-lh"><h3>Chats</h3><input id="mcq" type="search" placeholder="Search a username or Gmail" aria-label="Search chats" value="${esc(st.q)}">
+    <div class="mc-tabs"><button type="button" data-t="all">All</button><button type="button" data-t="un">Unread</button></div></div><ul class="mc-rows" id="mcr"></ul></aside>
+   <section class="mc-conv" id="mcc"></section></div>`;
+  const root=$('.mc-admin'),rows=$('#mcr'),conv=$('#mcc');let data=[],pn=null;
+  const when=d=>{const x=new Date(d);return x.toDateString()===new Date().toDateString()?MC.hm(d):x.toLocaleDateString(undefined,{day:'numeric',month:'short'})};
+  const tabs=()=>$$('.mc-tabs button',root).forEach(b=>b.classList.toggle('on',b.dataset.t===st.tab));
+  const drawList=()=>{const L=st.tab==='un'?data.filter(c=>c.unread):data;
+    rows.innerHTML=L.length?L.map(c=>`<li><button type="button" class="mc-row${c.unread?' un':''}${st.id===c.user._id?' on':''}" data-id="${c.user._id}"><span class="mc-pa">${ini(c.user)}</span><b>${nm(c.user)}</b><time>${c.last?when(c.last.at):''}</time><small>${c.last?(c.last.from==='admin'?'You: ':'')+(c.last.del?'Message deleted':esc(c.last.text)):'Start a conversation'}</small>${c.unread?`<span class="mc-n">${c.unread}</span>`:'<span></span>'}</button></li>`).join(''):`<li class="mc-lnone">${st.tab==='un'?'No unread chats.':st.q?'No one matches that search.':'No messages yet. When a user writes from the chat button, they show up here.'}</li>`;tabs()};
+  const refresh=async()=>{try{const d=await api('/admin/chats?'+new URLSearchParams({q:st.q,fresh:1}),undefined,1);if(!live())return;data=d.chats;drawList();chatBadge(data.reduce((n,c)=>n+c.unread,0))}catch(e){if(live()&&!data.length)rows.innerHTML=`<li class="mc-lnone">${esc(e.message)}</li>`}};
+  const blank=()=>{if(pn)pn.stop();pn=null;st.id=null;root.dataset.view='list';conv.innerHTML=`<div class="mc-empty"><span class="mc-ico"></span><b>Pick a chat</b><small>Choose a person on the left to read and reply.</small></div>`;drawList()};
+  const openChat=id=>{const c=data.find(x=>x.user._id===id);if(!c)return;const u=c.user;if(pn)pn.stop();st.id=id;root.dataset.view='chat';
+    conv.innerHTML=`<header class="mc-ch"><button type="button" class="mc-ib mc-back" aria-label="Back to chats">${ICON.back||'<svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>'}</button><span class="mc-pa">${ini(u)}</span>
+      <div><b>${nm(u)}</b><small>${flag(u.country)} ${esc(cname(u.country))} &middot; joined ${date(u.createdAt)}${u.banned?' &middot; banned':''}</small></div>
+      <button type="button" class="mc-ib" id="mcu" aria-label="View user details" title="View user details">${ICON.user}</button></header>`;
+    pn=MC.pane({side:'a',base:'/admin/chats/'+id,other:u.username||u.email,every:2500,onRead:refresh});conv.appendChild(pn.el);pn.start();drawList();
+    $('.mc-back',conv).onclick=blank;$('#mcu',conv).onclick=()=>openUser(id);if(!coarse())pn.focus()};
+  const coarse=()=>matchMedia('(pointer:coarse)').matches;
+  rows.onclick=e=>{const b=e.target.closest('.mc-row');if(b)openChat(b.dataset.id)};
+  $('.mc-tabs',root).onclick=e=>{const b=e.target.closest('button');if(b){st.tab=b.dataset.t;drawList()}};
+  $('#mcq').oninput=debounce(e=>{st.q=e.target.value;refresh()},300);
+  await refresh();if(!live())return;
+  if(st.id&&data.some(x=>x.user._id===st.id))openChat(st.id);else blank();
+  const t=setInterval(()=>{if(!live()){clearInterval(t);if(pn)pn.stop();return}if(!document.hidden)refresh()},4000);
+};
+
 // ---------- tasks ----------
 const selT=new Set();
 V.tasks=async live=>{
@@ -399,11 +442,15 @@ V.settings=async live=>{
   $('#so2').onchange=async e=>{if(!await act(()=>api('/admin/settings',{signupsOpen:e.target.checked}),e.target.checked?'Sign-ups are open':'Sign-ups are paused'))e.target.checked=!e.target.checked};
   $('#ex2').onclick=()=>act(()=>download('/admin/users.csv','mawie-users.csv'),'Export downloaded');
   // wallpaper: shrink the picture in the browser first so the upload stays small
-  const shrink=async f=>{const bm=await createImageBitmap(f),k=Math.min(1,1920/bm.width),c=document.createElement('canvas');c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);
-    c.getContext('2d').drawImage(bm,0,0,c.width,c.height);return c.toDataURL('image/jpeg',.82)};
+  const shrink=async f=>{const bm=await createImageBitmap(f),k=Math.min(1,1600/bm.width),c=document.createElement('canvas');c.width=Math.round(bm.width*k);c.height=Math.round(bm.height*k);
+    c.getContext('2d').drawImage(bm,0,0,c.width,c.height);
+    // WebP is the smallest. A browser that cannot make WebP gives JPEG instead. The server accepts up to 600 KB; this aims well under that.
+    const enc=(type,q)=>new Promise(res=>c.toBlob(b=>{if(!b)return res(null);const fr=new FileReader();fr.onload=()=>res({url:fr.result,type:b.type,size:b.size});fr.readAsDataURL(b)},type,q));
+    for(const q of [.74,.6,.45]){const o=await enc('image/webp',q);const w=o&&o.type==='image/webp'?o:await enc('image/jpeg',q);if(w&&w.size<=560*1024)return w.url}
+    throw new Error('too big')};
   let pick=null;
   $('#wf').onchange=async e=>{const f=e.target.files[0];$('#we').textContent='';$('#wu').disabled=true;pick=null;if(!f)return;
-    try{pick=await shrink(f);$('#wp').innerHTML=`<img src="${pick}" alt="Preview of the new wallpaper">`;$('#wu').disabled=false}catch{$('#we').textContent='That file could not be read as a picture'}};
+    try{pick=await shrink(f);$('#wp').innerHTML=`<img src="${pick}" alt="Preview of the new wallpaper">`;$('#wu').disabled=false}catch(x){$('#we').textContent=x&&x.message==='too big'?'That picture is too detailed. Try a simpler or smaller one.':'That file could not be read as a picture'}};
   $('#wu').onclick=async()=>{if(!pick)return;$('#wu').disabled=true;try{await api('/admin/wallpaper',{image:pick});toast('Wallpaper saved');V.settings(live)}catch(x){$('#we').textContent=x.message;$('#wu').disabled=false}};
   $('#wr').onclick=()=>act(async()=>{await api('/admin/wallpaper/remove',{});V.settings(live)},'Wallpaper removed');
   $('#gf').onsubmit=async e=>{e.preventDefault();const er=$('#ge');er.textContent='';try{await api('/admin/gate/change',Object.fromEntries(new FormData(e.target)));e.target.reset();toast('Admin password changed')}catch(x){er.textContent=x.message}};
