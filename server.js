@@ -36,7 +36,9 @@ if(require.main!==module)app.use(['/api','/wallpaper'],(q,r,n)=>{
 const assetV=(()=>{let t=0,v='';return()=>{const now=Date.now();if(now-t<3000&&v)return v;t=now;
   try{let x='';for(const d of['css','js'])for(const f of fs.readdirSync(path.join(PUB,d))){const st=fs.statSync(path.join(PUB,d,f));x+=f+st.size+':'+st.mtimeMs+';'}v=crypto.createHash('md5').update(x).digest('hex').slice(0,8)}catch{v=String(now)}return v}})();
 const pageCache=new Map();
-app.get(/^\/(?:([\w-]+)\.html)?$/,(q,r,next)=>{
+// /login.html -> /login (permanent redirect), and /login serves the page
+app.get(/^\/([\w-]+)\.html$/,(q,r,next)=>{if(!fs.existsSync(path.join(PUB,q.params[0]+'.html')))return next();const i=q.originalUrl.indexOf('?');r.redirect(301,(q.params[0]==='index'?'/':'/'+q.params[0])+(i>-1?q.originalUrl.slice(i):''))});
+app.get(/^\/(?:([\w-]+))?$/,(q,r,next)=>{
   const f=path.join(PUB,(q.params[0]||'index')+'.html');let st;try{st=fs.statSync(f)}catch{return next()}
   const v=assetV();let c=pageCache.get(f);
   if(!c||c.m!==st.mtimeMs||c.v!==v){c={m:st.mtimeMs,v,html:fs.readFileSync(f,'utf8').replace(/((?:href|src)="\/(?:css|js)\/[\w.-]+)"/g,'$1?v='+v+'"')};pageCache.set(f,c)}
@@ -573,7 +575,7 @@ app.get('/api/admin/referrals',auth,admin,wrap(async(q,r)=>r.json(await User.fin
 
 const PORT=process.env.PORT||3000;
 // One time: set the invite reward to 80 KES per referral, even if an older value was saved. After this it can still be changed from the admin panel.
-const resetGate=async()=>{if(String(process.env.RESET_ADMIN_PASSWORD).toLowerCase()==='true'){await Setting.deleteOne({key:'adminGateHash'});console.log('Admin password cleared. Open /mawira.html and create a new one, then remove RESET_ADMIN_PASSWORD from .env')}};
+const resetGate=async()=>{if(String(process.env.RESET_ADMIN_PASSWORD).toLowerCase()==='true'){await Setting.deleteOne({key:'adminGateHash'});console.log('Admin password cleared. Open /mawira and create a new one, then remove RESET_ADMIN_PASSWORD from .env')}};
 const startup=async()=>{
   await resetGate();
   // Make the database match models.js: drop indexes nobody uses any more, build the new ones (the TTL ones let old logs expire by themselves).

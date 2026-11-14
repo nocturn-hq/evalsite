@@ -4,8 +4,8 @@ window.adminInit=async()=>{
 const $=(s,r=document)=>r.querySelector(s);
 const gateP=api('/admin/gate').then(x=>x.state,()=>null); // runs at the same time as /me
 let meErr=null;const meRes=await api('/me').catch(e=>{meErr=e;return null});
-if(!meRes){document.body.innerHTML='<p style="padding:40px;font:16px system-ui;max-width:560px"><b>Could not reach the server.</b><br>'+esc(meErr&&meErr.message||'')+'<br><br><a href="/mawira.html">Try again</a> &middot; <a href="/dashboard.html">Go to your dashboard</a></p>';return}
-if(!meRes.user?.isAdmin){document.body.innerHTML='<p style="padding:40px;font:16px system-ui;max-width:560px"><b>This account is not an admin.</b><br>Log in with the Gmail set as ADMIN_EMAIL in your .env file.<br><br><a href="/dashboard.html">Go to your dashboard</a> &middot; <a href="#" onclick="logout();return false">Log out</a></p>';return}
+if(!meRes){document.body.innerHTML='<p style="padding:40px;font:16px system-ui;max-width:560px"><b>Could not reach the server.</b><br>'+esc(meErr&&meErr.message||'')+'<br><br><a href="/mawira">Try again</a> &middot; <a href="/dashboard">Go to your dashboard</a></p>';return}
+if(!meRes.user?.isAdmin){document.body.innerHTML='<p style="padding:40px;font:16px system-ui;max-width:560px"><b>This account is not an admin.</b><br>Log in with the Gmail set as ADMIN_EMAIL in your .env file.<br><br><a href="/dashboard">Go to your dashboard</a> &middot; <a href="#" onclick="logout();return false">Log out</a></p>';return}
 
 // ---------- secret admin password: nothing in the panel loads until it is entered ----------
 const gateState=async()=>(await api('/admin/gate')).state;
@@ -16,7 +16,7 @@ const askGate=state=>new Promise(done=>{
    <div class="f"><label for="gp">${setup?'New admin password':'Password'}</label><input id="gp" name="password" type="password" autocomplete="${setup?'new-password':'current-password'}" required></div>
    ${setup?'<div class="f"><label for="gc">Type it again</label><input id="gc" name="confirm" type="password" autocomplete="new-password" required><p class="hint">At least 8 characters with a lowercase letter, an uppercase letter, a number and a symbol.</p></div>':''}
    <p class="err" role="alert"></p><button class="b pri" type="submit">${setup?'Save and open panel':'Open panel'}</button>
-   <a class="gback" href="/dashboard.html">Back to my dashboard</a></form>`;
+   <a class="gback" href="/dashboard">Back to my dashboard</a></form>`;
   document.body.appendChild(el);const f=el.querySelector('form');el.querySelector('input').focus();
   f.onsubmit=async e=>{e.preventDefault();const er=f.querySelector('.err');er.textContent='';
     await busy(f.querySelector('button[type=submit]'),async()=>{try{const r=await api('/admin/gate/'+(setup?'setup':'unlock'),Object.fromEntries(new FormData(f)));sessionStorage.gateT=r.token;el.remove();done()}catch(x){er.textContent=x.message}})}});
@@ -460,7 +460,7 @@ V.settings=async live=>{
 let palI=0,palItems=[];
 const cmds=q=>{const L=[...ROUTES.map(r=>({t:r.t,s:'Go to page',i:r.i,f:()=>go(r.id)})),
   {t:'Toggle dark mode',s:'Command',i:'moon',f:toggleTheme},{t:'Download users (CSV)',s:'Command',i:'download',f:()=>act(()=>download('/admin/users.csv','mawie-users.csv'),'Export downloaded')},
-  {t:'View the site',s:'Command',i:'home',f:()=>location='/dashboard.html'},{t:'Log out',s:'Command',i:'logout',f:logout}];
+  {t:'View the site',s:'Command',i:'home',f:()=>location='/dashboard'},{t:'Log out',s:'Command',i:'logout',f:logout}];
   const m=q?L.filter(c=>c.t.toLowerCase().includes(q.toLowerCase())):L;
   if(q)m.unshift({t:`Find user “${q}”`,s:'Users',i:'users',f:()=>{S.users={...S.users,q,page:1};location.hash==='#/users'?route():go('users')}},{t:`Search submissions for “${q}”`,s:'Submissions',i:'inbox',f:()=>{S.submissions={...S.submissions,q,page:1};location.hash==='#/submissions'?route():go('submissions')}});
   return m};

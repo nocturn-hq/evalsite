@@ -50,7 +50,7 @@ const yr=document.getElementById('yr');if(yr)yr.textContent=new Date().getFullYe
 
 const NET_MSG='No internet connection. Please check your network and try again.';
 const _call=async(p,b,quiet)=>{let r;try{r=await fetch('/api'+p,{method:b?'POST':'GET',headers:{'Content-Type':'application/json',Authorization:'Bearer '+(localStorage.t||''),'x-gate':sessionStorage.gateT||''},body:b?JSON.stringify(b):undefined})}catch{throw new Error(navigator.onLine===false?NET_MSG:'We could not reach MawiE right now. Please check your connection and try again.')}
-  const j=await r.json().catch(()=>{throw new Error(r.status===404?'This feature is temporarily unavailable. Please try again shortly.':r.status>=500?'MawiE is having a problem right now. Please try again in a moment.':'Something went wrong. Please try again.')});if(!r.ok){if(j.gate&&document.body.dataset.p==='adminx'&&!quiet){sessionStorage.removeItem('gateT');const last=+sessionStorage.gateR||0;if(Date.now()-last>5000){sessionStorage.gateR=Date.now();location.reload()}throw new Error(j.error)}if(r.status===401&&!['home','login','signup'].includes(document.body.dataset.p))location='/login.html?next='+encodeURIComponent(location.pathname+location.hash);throw new Error(j.error||'Something went wrong')}return j};
+  const j=await r.json().catch(()=>{throw new Error(r.status===404?'This feature is temporarily unavailable. Please try again shortly.':r.status>=500?'MawiE is having a problem right now. Please try again in a moment.':'Something went wrong. Please try again.')});if(!r.ok){if(j.gate&&document.body.dataset.p==='adminx'&&!quiet){sessionStorage.removeItem('gateT');const last=+sessionStorage.gateR||0;if(Date.now()-last>5000){sessionStorage.gateR=Date.now();location.reload()}throw new Error(j.error)}if(r.status===401&&!['home','login','signup'].includes(document.body.dataset.p))location='/login?next='+encodeURIComponent(location.pathname+location.hash);throw new Error(j.error||'Something went wrong')}return j};
 // Admin answers are kept for 20 seconds, and any change (a POST) clears them. Going back to a page, or hovering a menu item first, feels instant.
 const _gc=new Map(),_clone=x=>typeof structuredClone==='function'?structuredClone(x):x;
 const api=(p,b,quiet)=>{
@@ -182,9 +182,9 @@ const pages={
    if(d.username.length<3)throw new Error('Username must be at least 3 characters');
    if(!pwOk(d.password))throw new Error('Your password needs to meet every rule in the list');
    if(d.password!==d.confirmPassword)throw new Error('Passwords do not match');
-   localStorage.t=(await api('/signup',d)).token;location='/dashboard.html'});
+   localStorage.t=(await api('/signup',d)).token;location='/dashboard'});
  },
- login(){submit('#f',async d=>{localStorage.t=(await api('/login',d)).token;const n=new URLSearchParams(location.search).get('next');location=n&&/^\/[\w\-.\/]*(#[\w\/\-]*)?$/.test(n)&&!n.startsWith('//')?n:'/dashboard.html'})},
+ login(){submit('#f',async d=>{localStorage.t=(await api('/login',d)).token;const n=new URLSearchParams(location.search).get('next');location=n&&/^\/[\w\-.\/]*(#[\w\/\-]*)?$/.test(n)&&!n.startsWith('//')?n:'/dashboard'})},
  async dashboard(){
   wireTiles();
   const fail=e=>{$('#dashErr').hidden=false;$('#dashErrMsg').textContent=(e&&e.message)||'Something went wrong.';['#wvideo','#wsurvey','#wapp'].forEach(q=>$(q).innerHTML=emptyBox('Tasks could not be loaded. See the message at the top of the page.'))};
@@ -197,7 +197,7 @@ const pages={
   const wd=$('#wdModal'),wdClose=()=>{wd.hidden=true;document.body.style.overflow=''};
   $('#wdBtn').onclick=()=>{$('#wdWhen').textContent=payoutDate?' ('+new Date(payoutDate).toDateString()+')':'';wd.hidden=false;document.body.style.overflow='hidden';$('#wdOk').focus()};
   $('#wdOk').onclick=wdClose;wd.onclick=e=>{if(e.target===wd)wdClose()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!wd.hidden)wdClose()});
-  const link=location.origin+'/signup.html?ref='+user.refCode;$('#ref').value=link;
+  const link=location.origin+'/signup?ref='+user.refCode;$('#ref').value=link;
   const code=String(user.refCode||'').toUpperCase();$('#refCode').textContent=code;
   const co=C.find(x=>x.iso2===String(user.country||'').toUpperCase());
   if(co){$('#hFlag').textContent=[...co.iso2.toUpperCase()].map(ch=>String.fromCodePoint(127397+ch.charCodeAt(0))).join('');$('#hName').textContent=co.country;$('#hPill').hidden=false}
@@ -219,7 +219,7 @@ const pages={
     return `<li><span class="ai${neg?' out':''}">${ICON[I[t.kind]||'coins']}</span><div class="am"><b>${esc(t.note||L[t.kind]||t.kind)}</b><small>${L[t.kind]||t.kind} · ${new Date(t.createdAt).toLocaleDateString(undefined,{month:'short',day:'numeric'})}</small></div><span class="amt${neg?' neg':''}">${neg?'-':'+'}${m}</span></li>`}).join('')
     :'<li><div class="am"><b>Nothing yet</b><small>Watch a video or answer a survey and your earnings show up here.</small></div></li>'}).catch(()=>{});
  },
- adminx(){window.adminInit().catch(e=>{document.body.innerHTML='<p style="padding:40px;font:16px system-ui;max-width:560px"><b>The admin panel could not open.</b><br>'+esc(e&&e.message||e)+'<br><br><a href="/mawira.html">Try again</a> &middot; <a href="/dashboard.html">Go to your dashboard</a></p>'})}
+ adminx(){window.adminInit().catch(e=>{document.body.innerHTML='<p style="padding:40px;font:16px system-ui;max-width:560px"><b>The admin panel could not open.</b><br>'+esc(e&&e.message||e)+'<br><br><a href="/mawira">Try again</a> &middot; <a href="/dashboard">Go to your dashboard</a></p>'})}
  };
 window.evalTask=(id,btn)=>busy(btn||(window.event&&window.event.currentTarget),async()=>{try{await api(`/tasks/${id}/evaluate`,{answer:$('#a'+id).value});location.reload()}catch(x){alert(x.message)}});
 window.logout=logout;

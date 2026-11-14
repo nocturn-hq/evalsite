@@ -120,7 +120,7 @@ setTimeout(()=>{if(open||tipSeen()||!badge.hidden)return;tip.hidden=false;fab.cl
 const setBadge=n=>{badge.hidden=!n;badge.textContent='';fab.setAttribute('aria-label',n?'Chat with support, you have a new message':'Chat with support')};
 const full=on=>{win.classList.toggle('full',on);D.documentElement.classList.toggle('mc-lock',on);sz.innerHTML=on?I.shrink:I.expand;sz.setAttribute('aria-label',on?'Shrink chat':'Expand chat')};
 const build=async()=>{
-  if(!tok){const here=P==='login'?'<a class="mc-btn" href="/signup.html">Create account</a>':P==='signup'?'<a class="mc-btn pri" href="/login.html">Log in</a>':'<a class="mc-btn pri" href="/login.html?next=/dashboard.html">Log in</a><a class="mc-btn" href="/signup.html">Create account</a>';
+  if(!tok){const here=P==='login'?'<a class="mc-btn" href="/signup">Create account</a>':P==='signup'?'<a class="mc-btn pri" href="/login">Log in</a>':'<a class="mc-btn pri" href="/login?next=/dashboard">Log in</a><a class="mc-btn" href="/signup">Create account</a>';
     body.innerHTML=`<div class="mc-out"><div class="mc-m in wel"><div class="mc-b"><b class="mc-who">MawiE Support</b><span class="mc-t">Welcome. Log in to message our team. Your conversation is saved, so you can come back to it any time.</span></div></div><div class="mc-acts">${here}</div></div>`;return}
   let name='';try{name=(await api('/me',undefined,1)).user.username||''}catch{}
   pn=pane({side:'u',base:'/chat',other:'Support',every:2500,onRead:()=>setBadge(0),
