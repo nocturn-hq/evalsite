@@ -9,7 +9,7 @@ const PUB=path.join(__dirname,'public');
 app.disable('x-powered-by');
 // Behind a hosting proxy (Render, Railway, Fly, Heroku) the visitor's real address is in X-Forwarded-For. It is only trusted when the host
 // really is a proxy, otherwise anyone could fake an address and dodge the rate limits. Force it with TRUST_PROXY=1 (or 0 to switch it off).
-{const t=process.env.TRUST_PROXY;app.set('trust proxy',t!==undefined?(/^\d+$/.test(t)?+t:t==='true'?1:false):(process.env.RENDER||process.env.RAILWAY_ENVIRONMENT||process.env.FLY_APP_NAME||process.env.DYNO?1:false))}
+{const t=process.env.TRUST_PROXY;app.set('trust proxy',t!==undefined?(/^\d+$/.test(t)?+t:t==='true'?1:false):(process.env.RENDER||process.env.RAILWAY_ENVIRONMENT||process.env.FLY_APP_NAME||process.env.DYNO||process.env.VERCEL?1:false))}
 // Browser security headers. Scripts and styles may be inline (the pages use a few), but nothing can be loaded from other sites except the YouTube player.
 const CSP="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.youtube.com https://s.ytimg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://i.ytimg.com; font-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
 app.use((q,r,n)=>{r.set({'Content-Security-Policy':CSP,'X-Content-Type-Options':'nosniff','X-Frame-Options':'DENY','Referrer-Policy':'strict-origin-when-cross-origin','Permissions-Policy':'camera=(), microphone=(), geolocation=(), payment=()'});if(q.secure)r.set('Strict-Transport-Security','max-age=15552000');n()});
@@ -18,6 +18,19 @@ if(compression)app.use(compression());
 const jsonSmall=express.json({limit:'64kb'}),jsonBig=express.json({limit:'800kb'});
 app.use((q,r,n)=>q.path==='/api/admin/wallpaper'?n():jsonSmall(q,r,n));
 app.use('/api',(q,r,n)=>{r.set('Cache-Control','no-store');n()});
+// Vercel (and other serverless hosts) import this file instead of running it, so the block at the bottom that connects to MongoDB never runs.
+// Connect on the first request instead and reuse the connection. Only the API and the wallpaper need the database, pages do not.
+let dbReady=null;
+const connectDb=()=>dbReady||(dbReady=(async()=>{
+  const sec=String(process.env.JWT_SECRET||'');
+  if(!process.env.MONGO_URI||!sec)throw new Error('MONGO_URI or JWT_SECRET is missing in the Vercel Environment Variables');
+  mongoose.connection.on('error',e=>console.error('MongoDB error:',e.message));
+  await mongoose.connect(process.env.MONGO_URI,{maxPoolSize:10,serverSelectionTimeoutMS:15000,compressors:'zlib'});
+  startup().catch(e=>console.error('Startup tasks problem:',e.message)); // index sync and one-time clean-ups, in the background
+})().catch(e=>{dbReady=null;throw e}));
+if(require.main!==module)app.use(['/api','/wallpaper'],(q,r,n)=>{
+  if(mongoose.connection.readyState===1)return n();
+  connectDb().then(()=>n(),e=>{console.error('Could not connect to MongoDB:',e.message);r.status(503).json({error:'The server could not reach the database: '+e.message})})});
 // Pages are sent with ?v=<hash> on every stylesheet and script. The hash changes whenever a file changes, so the files can be cached for a year
 // (instant repeat visits) and an update still shows up straight away.
 const assetV=(()=>{let t=0,v='';return()=>{const now=Date.now();if(now-t<3000&&v)return v;t=now;
