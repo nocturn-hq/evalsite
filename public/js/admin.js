@@ -312,7 +312,7 @@ V.leaderboard=async live=>{
 // ---------- support chat: list of people on the left, the conversation on the right (one screen at a time on a phone) ----------
 V.chats=async live=>{
   const st=S.chats||(S.chats={q:'',tab:'all',id:null});
-  $('#view').innerHTML=pagehead('Support chat','Messages from your users. Pick a person to reply.')+`<div class="mc-admin" data-view="${st.id?'chat':'list'}">
+  $('#view').innerHTML=pagehead('Support chat','Messages from your users. Pick a person to reply.')+`<div class="mc-admin" id="mca" data-view="${st.id?'chat':'list'}">
    <aside class="mc-list"><div class="mc-lh"><h3>Chats</h3><input id="mcq" type="search" placeholder="Search a username or Gmail" aria-label="Search chats" value="${esc(st.q)}">
     <div class="mc-tabs"><button type="button" data-t="all">All</button><button type="button" data-t="un">Unread</button></div></div><ul class="mc-rows" id="mcr"></ul></aside>
    <section class="mc-conv" id="mcc"></section></div>`;

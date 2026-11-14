@@ -59,7 +59,10 @@ body[data-p="dashboard"] .card{border:1px solid var(--line);border-radius:var(--
 .ref-card .copyrow{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:6px 6px 6px 14px;align-items:center;gap:8px}
 .ref-card .copyrow input{background:none;border:0;color:#fff;padding:8px 0;box-shadow:none;text-overflow:ellipsis}
 .ref-card .copyrow input::placeholder{color:#86c9b0}
-.ref-card .copyrow button{background:#f59e0b;color:#3b2300;padding:12px 18px;white-space:nowrap;display:inline-flex;align-items:center;gap:8px}
+.ref-card .copyrow button,.ref-card .codebox button{background:#f59e0b;color:#3b2300;padding:12px 18px;white-space:nowrap;display:inline-flex;align-items:center;gap:8px}
+.ref-card .codebox{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(0,0,0,.22);border:1.5px dashed rgba(252,211,77,.65);border-radius:16px;padding:10px 10px 10px 18px}
+.ref-card .codebox small{display:block;color:#a7f3d0;font:600 .82rem var(--bd)}
+.ref-card .codebox b{display:block;font:800 clamp(1.6rem,6vw,2.2rem)/1.15 var(--hd);letter-spacing:.2em;color:#fcd34d;user-select:all;overflow-wrap:anywhere}
 .ref-card .share{display:flex;flex-wrap:wrap;gap:8px}
 .ref-card .share a{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.08);border-radius:999px;padding:9px 16px;font-weight:600;font-size:.92rem;color:#fff;text-decoration:none}
 .ref-card .share a:hover{background:#fff;color:#065f46}

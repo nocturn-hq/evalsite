@@ -102,8 +102,9 @@ window.MC={pane,I,R,E,hm};
 // ---------- floating button for visitors and users (not the admin panel) ----------
 if(D.body.dataset.p==='adminx')return;
 const P=D.body.dataset.p,tok=(()=>{try{return localStorage.t}catch{return''}})();
-const root=D.createElement('div');root.className='mc-root mc-widget';
-root.innerHTML=`<button class="mc-fab" type="button" aria-label="Chat with support" aria-expanded="false" aria-controls="mcwin"><span class="mc-ico"></span><b class="mc-badge" hidden></b></button>
+const root=D.createElement('div');root.className='mc-root mc-widget';root.id='mcw';
+root.innerHTML=`<div class="mc-tip" hidden><button type="button" class="go">Need help? Message our team</button><button type="button" class="no" aria-label="Dismiss">${I.x}</button></div>
+ <button class="mc-fab" type="button" aria-label="Chat with support" aria-expanded="false" aria-controls="mcwin"><span class="mc-ico"></span><b class="mc-badge" hidden></b></button>
  <section class="mc-win" id="mcwin" role="dialog" aria-label="Support chat" hidden>
   <header class="mc-h"><span class="mc-av"><img src="/img/logo.png" alt=""></span><div class="mc-hn"><b>MawiE Support</b><small>Ask us about your account or payouts</small></div>
    <button type="button" class="mc-hb" data-a="size" aria-label="Expand chat">${I.expand}</button><button type="button" class="mc-hb" data-a="close" aria-label="Close chat">${I.x}</button></header>
@@ -111,7 +112,12 @@ root.innerHTML=`<button class="mc-fab" type="button" aria-label="Chat with suppo
 D.body.appendChild(root);
 const fab=root.querySelector('.mc-fab'),win=root.querySelector('.mc-win'),body=root.querySelector('.mc-body'),badge=root.querySelector('.mc-badge'),sz=root.querySelector('[data-a=size]');
 let pn=null,open=false,poll=0;
-const setBadge=n=>{badge.hidden=!n;badge.textContent=n>9?'9+':n};
+const tip=root.querySelector('.mc-tip'),tipSeen=()=>{try{return sessionStorage.mcTip}catch{return'1'}};
+const hideTip=()=>{tip.hidden=true;try{sessionStorage.mcTip='1'}catch{}};
+tip.querySelector('.no').onclick=hideTip;tip.querySelector('.go').onclick=()=>{hideTip();show(true)};
+// one friendly nudge per visit: the button gives a small wiggle and a note appears beside it
+setTimeout(()=>{if(open||tipSeen()||!badge.hidden)return;tip.hidden=false;fab.classList.add('wig');setTimeout(()=>fab.classList.remove('wig'),1000);setTimeout(()=>{if(!tip.hidden)hideTip()},12000)},3500);
+const setBadge=n=>{badge.hidden=!n;badge.textContent='';fab.setAttribute('aria-label',n?'Chat with support, you have a new message':'Chat with support')};
 const full=on=>{win.classList.toggle('full',on);D.documentElement.classList.toggle('mc-lock',on);sz.innerHTML=on?I.shrink:I.expand;sz.setAttribute('aria-label',on?'Shrink chat':'Expand chat')};
 const build=async()=>{
   if(!tok){const here=P==='login'?'<a class="mc-btn" href="/signup.html">Create account</a>':P==='signup'?'<a class="mc-btn pri" href="/login.html">Log in</a>':'<a class="mc-btn pri" href="/login.html?next=/dashboard.html">Log in</a><a class="mc-btn" href="/signup.html">Create account</a>';
@@ -121,11 +127,11 @@ const build=async()=>{
     welcome:`Hi${name?' '+E(name):''}, welcome to MawiE support. Tell us what you need help with and our team will reply right here. You can close this and come back, your chat is saved.`,
     chips:['My payout','A video did not pay','Account help','Referral bonus']});
   body.appendChild(pn.el)};
-const show=async on=>{open=on;win.hidden=!on;fab.setAttribute('aria-expanded',on);fab.classList.toggle('on',on);
+const show=async on=>{open=on;if(on)hideTip();win.hidden=!on;fab.setAttribute('aria-expanded',on);fab.classList.toggle('on',on);
   if(on){if(!body.firstChild)await build();if(pn){pn.start();pn.focus()}setBadge(0)}else{if(pn)pn.stop();full(false);fab.focus()}};
 fab.onclick=()=>show(!open);
 win.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;if(b.dataset.a==='close')show(false);if(b.dataset.a==='size')full(!win.classList.contains('full'))});
 D.addEventListener('keydown',e=>{if(e.key==='Escape'&&open){if(win.classList.contains('full'))full(false);else show(false)}});
 // while the window is closed, check for new replies now and then so the button can show a number
-if(tok){const check=async()=>{if(open||D.hidden)return;try{setBadge((await api('/chat/unread',undefined,1)).n)}catch{}};setTimeout(check,1500);poll=setInterval(check,20000)}
+if(tok){const check=async()=>{if(open||D.hidden)return;try{setBadge((await api('/chat/unread',undefined,1)).n)}catch{}};setTimeout(check,1500);poll=setInterval(check,10000)}
 })();

@@ -195,13 +195,16 @@ const pages={
   $('#wdBtn').onclick=()=>{$('#wdWhen').textContent=payoutDate?' ('+new Date(payoutDate).toDateString()+')':'';wd.hidden=false;document.body.style.overflow='hidden';$('#wdOk').focus()};
   $('#wdOk').onclick=wdClose;wd.onclick=e=>{if(e.target===wd)wdClose()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!wd.hidden)wdClose()});
   const link=location.origin+'/signup.html?ref='+user.refCode;$('#ref').value=link;
+  const code=String(user.refCode||'').toUpperCase();$('#refCode').textContent=code;
   const co=C.find(x=>x.iso2===String(user.country||'').toUpperCase());
   if(co){$('#hFlag').textContent=[...co.iso2.toUpperCase()].map(ch=>String.fromCodePoint(127397+ch.charCodeAt(0))).join('');$('#hName').textContent=co.country;$('#hPill').hidden=false}
   const G=[5,10,25,50],g=G.find(x=>x>referrals)||G[G.length-1],plain=h=>h.replace(/<small>.*?<\/small>/,'').replace(/<[^>]+>/g,'');
   $('#goalTxt').textContent=referrals>=G[G.length-1]?`Top goal reached: ${referrals} friends`:`Next goal: ${referrals} of ${g} friends`;
   $('#goalAmt').textContent='Earn '+plain(money(g*CFG.referrerKes,user.country));$('#goalBar').style.width=Math.min(100,referrals/g*100)+'%';
   $('#bonus').innerHTML=money(CFG.referrerKes,user.country);
-  const msg=encodeURIComponent('Join me on MawiE and get paid to rate videos and surveys: '+link);$('#shWa').href='https://wa.me/?text='+msg;$('#shTg').href='https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('Join me on MawiE and get paid to rate videos and surveys.');
+  const msg=encodeURIComponent('Join me on MawiE and get paid to rate videos and surveys: '+link+' (referral code: '+code+')');$('#shWa').href='https://wa.me/?text='+msg;$('#shTg').href='https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('Join me on MawiE and get paid to rate videos and surveys.');
+  const cc=$('#copyCode');
+  cc.onclick=async()=>{try{await navigator.clipboard.writeText(code)}catch{const r=document.createRange();r.selectNodeContents($('#refCode'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);try{document.execCommand('copy')}catch{}}cc.innerHTML=ICON.check+'Copied';setTimeout(()=>cc.innerHTML=ICON.copy+'Copy code',1800)};
   const cp=$('#copy');
   cp.onclick=async()=>{try{await navigator.clipboard.writeText(link)}catch{$('#ref').select();try{document.execCommand('copy')}catch{}}cp.innerHTML=ICON.check+'Copied';setTimeout(()=>cp.innerHTML=ICON.copy+'Copy link',1800)};
   let tasks=[];try{tasks=await api('/tasks')}catch(e){fail(e)}
